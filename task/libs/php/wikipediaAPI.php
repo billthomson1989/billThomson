@@ -3,7 +3,7 @@
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
-$url = "https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&utf8=1&formatversion=2&srsearch=london";
+$url = "http://api.geonames.org/wikipediaSearch?q=london&maxRows=10&username=billthomson1989";
 
 $ch = curl_init();
 
