@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="libs/css/styles.css">
+    <title>API Table</title>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <th>API Name</th>
+        <th>API Description</th>
+        <th></th>
+      </tr>
+      <tr>
+        <td>Geonames Country Info</td>
+        <td>Capital, Population, Area in square km, Bounding Box of mainland</td>
+        <td><button id="countryBtn">Submit</button></td>
+      </tr>
+      <tr>
+        <td>Geonames Weather</td>
+        <td>Returns a list of weather stations with the most recent weather observation</td>
+        <td><button id="weatherBtn">Submit</button></td>
+      </tr>
+      <tr>
+        <td>Wikipedia</td>
+        <td>returns the wikipedia entries found for the searchterm as xml document </td>
+        <td><button id="wikiBtn">Submit</button></td>
+      </tr>
+    </table>
+    <div id="results">
+      <h2>API Results</h2>
+      <table id="results-table">
+        <thead>
+          <tr>
+            <th>API</th>
+            <th>Title</th>
+            <th>Summary</th>
+            <th>Country Code</th>
+            <th>Wikipedia URL</th>
+            <th>Language</th>
+            <th>Observation</th>
+            <th>Continent</th>
+            <th>Capital</th>
+            <th>Languages</th>
+            <th>Country Name</th>
+            <th>Currency Code</th>
+          </tr>
+        </thead>
+        <tbody id="results-table-body">
+        </tbody>
+      </table>
+    </div>
+    <script src="libs/js/jquery-2.2.3.min.js"></script>
+    <script src="libs/js/script.js"></script>
+  </body>
+</html>
+
+
+
+
+
+
+    
+

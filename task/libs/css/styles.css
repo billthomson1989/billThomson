@@ -1,0 +1,67 @@
+body {
+  margin: 0 auto;
+  overflow-x: hidden;
+  background-color: seashell;
+}
+
+/* Table */
+table {
+  border: 2px solid #000000;
+  border-collapse: collapse;
+  margin: 0 auto;
+  padding: 0px;
+  table-layout: fixed;
+  min-width: 100%;
+}
+
+table th {
+  text-align: center;
+  padding: 20px;
+  border: 2px solid #000000;
+  background: rgba(190, 176, 96);
+  color: #000;
+  font-weight: bold;
+  text-align: center;
+}
+
+table td {
+  padding: 20px;
+  border: 2px solid #000000;
+}
+
+table tr {
+  background-color: #dddddd;
+  color: #000000;
+  text-align: center;
+}
+
+/* Buttons */
+button {
+  min-width: 100px;
+  min-height: 50px;
+  font-family: "Nunito", sans-serif;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1.3px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(90deg, silver, rgb(190, 176, 96));
+  border: 2px solid black;
+  border-radius: 1000px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  padding: 20px;
+}
+
+button:hover {
+  background: linear-gradient(90deg, ivory);
+  border-color: silver;
+}
+
+button:focus {
+  color: #313133;
+  transform: translateZ(-6px);
+  box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.3);
+}
