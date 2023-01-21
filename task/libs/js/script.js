@@ -1,60 +1,3 @@
-$(document).ready(function() {
-  $('#wikiForm').on('submit', function(e) {
-    e.preventDefault();
-    $('#results-table-body').empty(); // Clear the table before appending new data
-    var inputValue = $('#searchTerm').val();
-    $('#results-table thead tr:nth-child(1) th:nth-child(2)').text('Title');
-    $('#results-table thead tr:nth-child(1) th:nth-child(3)').text('Summary');
-    $('#results-table thead tr:nth-child(1) th:nth-child(4)').text('Country Code');
-    $('#results-table thead tr:nth-child(1) th:nth-child(5)').text('Wikipedia URL');
-    $('#results-table thead').show();
-    $.ajax({
-      url: 'libs/php/wikipediaAPI.php',
-      type: 'GET',
-      data: {
-        searchTerm: inputValue
-      },
-      dataType: 'json',
-      success: function (result) {
-        $.each(result.geonames, function (i, item) {
-          var row = $('<tr>');
-          var apiNameCell = $('<td>').text('Wikipedia');
-          var titleCell = $('<td>').text(item.title);
-          var summaryCell = $('<td>').text(item.summary);
-          var countryCodeCell = $('<td>').text(item.countryCode);
-          var wikipediaUrlCell = $('<td>').text(item.wikipediaUrl);
-          row.append(apiNameCell, titleCell, summaryCell, countryCodeCell, wikipediaUrlCell);
-          $('#results-table-body').append(row);
-        });
-      }
-    });
-
-$('#weatherBtn').click(function () {
-$('#results-table-body').empty(); // Clear the table before appending new data
-var inputValue = $('#inputWeather').val();
-$('#results-table thead tr:nth-child(1) th:nth-child(2)').text('Language');
-$('#results-table thead tr:nth-child(1) th:nth-child(3)').text('Observation');
-$('#results-table thead').show();
-$.ajax({
-url: 'libs/php/weatherAPI.php',
-type: 'GET',
-data: {
-location: inputValue
-},
-dataType: 'json',
-success: function (result) {
-$.each(result.weatherObservations, function (i, item) {
-var row = $('<tr>');
-var apiNameCell = $('<td>').text('Geonames Weather');
-var languageCell = $('<td>').text(item.lng);
-var observationCell = $('<td>').text(item.observation);
-row.append(apiNameCell, languageCell, observationCell);
-$('#results-table-body').append(row);
-});
-}
-});
-});
-
 $('#countryBtn').click(function () {
   var inputValue = $('#inputCountry').val();
   $('#results-table-body').empty(); // Clear the table before appending new data
@@ -98,5 +41,60 @@ $('#countryBtn').click(function () {
       }
       });
       });
+
+$('#weatherBtn').click(function () {
+$('#results-table-body').empty(); // Clear the table before appending new data
+var inputValue = $('#inputWeather').val();
+$('#results-table thead tr:nth-child(1) th:nth-child(2)').text('Language');
+$('#results-table thead tr:nth-child(1) th:nth-child(3)').text('Observation');
+$('#results-table thead').show();
+$.ajax({
+url: 'libs/php/weatherAPI.php',
+type: 'GET',
+data: {
+location: inputValue
+},
+dataType: 'json',
+success: function (result) {
+$.each(result.weatherObservations, function (i, item) {
+var row = $('<tr>');
+var apiNameCell = $('<td>').text('Geonames Weather');
+var languageCell = $('<td>').text(item.lng);
+var observationCell = $('<td>').text(item.observation);
+row.append(apiNameCell, languageCell, observationCell);
+$('#results-table-body').append(row);
+});
+}
+});
+});
+
+$('#wikiForm').on('submit', function(e) {
+  e.preventDefault();
+  $('#results-table-body').empty(); // Clear the table before appending new data
+  var inputValue = $('#searchTerm').val();
+  $('#results-table thead tr:nth-child(1) th:nth-child(2)').text('Title');
+  $('#results-table thead tr:nth-child(1) th:nth-child(3)').text('Summary');
+  $('#results-table thead tr:nth-child(1) th:nth-child(4)').text('Country Code');
+  $('#results-table thead tr:nth-child(1) th:nth-child(5)').text('Wikipedia URL');
+  $('#results-table thead').show();
+  $.ajax({
+    url: 'libs/php/wikipediaAPI.php',
+    type: 'GET',
+    data: {
+      searchTerm: inputValue
+    },
+    dataType: 'json',
+    success: function (result) {
+      $.each(result.geonames, function (i, item) {
+        var row = $('<tr>');
+        var apiNameCell = $('<td>').text('Wikipedia');
+        var titleCell = $('<td>').text(item.title);
+        var summaryCell = $('<td>').text(item.summary);
+        var countryCodeCell = $('<td>').text(item.countryCode);
+        var wikipediaUrlCell = $('<td>').text(item.wikipediaUrl);
+        row.append(apiNameCell, titleCell, summaryCell, countryCodeCell, wikipediaUrlCell);
+        $('#results-table-body').append(row);
       });
-    });
+    }
+  });
+});
