@@ -14,18 +14,32 @@
       <tr>
         <td>Geonames Country Info</td>
         <td>Capital, Population, Area in square km, Bounding Box of mainland</td>
-        <td><button id="countryBtn">Submit</button></td>
-      </tr>
+        <td>
+          <label for="inputCountry">Country Name:</label>
+          <input type="text" id="inputCountry" placeholder="Enter a country name">
+          <button id="countryBtn">Submit</button>
+        </td>
+      </tr>      
       <tr>
         <td>Geonames Weather</td>
         <td>Returns a list of weather stations with the most recent weather observation</td>
-        <td><button id="weatherBtn">Submit</button></td>
+        <td>
+            <label for="inputWeather">Location:</label>
+            <input type="text" id="inputWeather" placeholder="Enter a location name">
+            <button id="weatherBtn">Submit</button>
+        </td>
       </tr>
       <tr>
         <td>Wikipedia</td>
         <td>returns the wikipedia entries found for the searchterm as xml document </td>
-        <td><button id="wikiBtn">Submit</button></td>
-      </tr>
+        <td>
+            <form id="wikiForm">
+                <label for="searchTerm">Search Term:</label>
+                <input type="text" id="searchTerm">
+                <button id="wikiBtn" type="submit">Submit</button>
+            </form>
+        </td>
+    </tr>
     </table>
     <div id="results">
       <h2>API Results</h2>
@@ -54,6 +68,7 @@
     <script src="libs/js/script.js"></script>
   </body>
 </html>
+
 
 
 

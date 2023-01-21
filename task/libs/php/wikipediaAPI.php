@@ -3,7 +3,8 @@ header('Content-Type: application/json');
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
-$url = "http://api.geonames.org/wikipediaSearch?q=london&maxRows=10&username=billthomson1989&type=json";
+$searchTerm = $_REQUEST["searchTerm"];
+$url = "http://api.geonames.org/wikipediaSearch?q=$searchTerm&maxRows=10&username=billthomson1989&type=json";
 
 $ch = curl_init();
 
