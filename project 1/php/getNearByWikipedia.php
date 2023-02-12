@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 $east = $_GET['east'];
@@ -28,3 +29,35 @@ curl_close($ch);
 echo $response;
 
 ?>
+=======
+<?php
+
+$east = $_GET['east'];
+$west = $_GET['west'];
+$north = $_GET['north'];
+$south = $_GET['south'];
+$username = $_GET['username'];
+
+// API endpoint
+$url = "http://api.geonames.org/wikipediaBoundingBoxJSON?north=$north&south=$south&east=$east&west=$west&username=$username";
+
+// Initialize cURL session
+$ch = curl_init();
+
+// Set the URL
+curl_setopt($ch, CURLOPT_URL, $url);
+
+// Return the response as a string instead of printing it to the screen
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+// Execute the cURL request
+$response = curl_exec($ch);
+
+// Close the cURL session
+curl_close($ch);
+
+// Return the response
+echo $response;
+
+?>
+>>>>>>> c5bf7ae743824e11af5f6f796264b1c7564e4329
