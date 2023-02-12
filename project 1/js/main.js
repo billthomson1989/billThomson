@@ -308,78 +308,85 @@ async function get_covid_data() {
   map.spin(false);
   $("#coronoModal").modal();
 }
-async function get_weather_data() {
+function get_weather_data() {
   map.spin(true);
-  const response = await $.ajax({
+  $.ajax({
     url: "php/getWeatherInfo.php",
     type: "GET",
     data: {
       lat: lat,
       lng: lng
     },
+    success: function (response) {
+      let details = $.parseJSON(response);
+      console.log(details);
+      $("#first_row").html("");
+      $("#second_row").html("");
+      $("#third_row").html("");
+      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      for (let i = 0; i < 5; i++) {
+        const d = details["daily"][i];
+        const day = days[new Date(d["dt"] * 1000).getDay()];
+        $("#first_row").append("<td>" + day + "</td>");
+        $("#second_row").append("<td>" + parseInt(d["temp"]["max"]) + "°</td>");
+        $("#third_row").append("<td>" + parseInt(d["temp"]["min"]) + "°</td>");
+      }
+      $("#weather_city_name").html(details.timezone);
+      let daily = details["daily"][0]["weather"][0];
+      $("#weather_description").html(
+        daily["main"] +
+        "<span>Wind " +
+        parseInt(details["daily"][0]["wind_speed"]) +
+        "km/h <span class='dot'>•</span> Precip " +
+        details["daily"][0]["clouds"] +
+        "%</span></h3>"
+      );
+      $("#weather_data img").attr(
+        "src",
+        "https://s3-us-west-2.amazonaws.com/s.cdpn.io/162656/" +
+        daily["icon"] +
+        ".svg"
+      );
+      $("#weather_data .image_parent h1").html(
+        parseInt(details["daily"][0]["temp"]["day"]) + "°"
+      );
+      map.spin(false);
+      $("#weatherModal").modal();
+    },
   });
-
-  let details = response;
-  console.log(details);
-  $("#first_row").html("");
-  $("#second_row").html("");
-  $("#third_row").html("");
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-  details.daily.forEach((dayData, index) => {
-    if (index > 4) return;
-    const day = days[new Date(dayData.dt * 1000).getDay()];
-    $("#first_row").append("<td>" + day + "</td>");
-    $("#second_row").append("<td>" + parseInt(dayData.temp.max) + "°</td>");
-    $("#third_row").append("<td>" + parseInt(dayData.temp.min) + "°</td>");
-  });
-
-  $("#weather_city_name").html(details.timezone);
-  let daily = details.daily[0].weather[0];
-  $("#weather_description").html(
-    daily.main +
-    "<span>Wind " +
-    parseInt(details.daily[0].wind_speed) +
-    "km/h <span class='dot'>•</span> Precip " +
-    details.daily[0].clouds +
-    "%</span></h3>"
-  );
-  $("#weather_data img").attr(
-    "src",
-    "https://s3-us-west-2.amazonaws.com/s.cdpn.io/162656/" +
-    daily.icon +
-    ".svg"
-  );
-
-  map.spin(false);
-  $("#weatherModal").modal();
 }
-async function getNewsData() {
+function get_news_data() {
   $("#news_data").html("");
   map.spin(true);
-  const response = await $.ajax({
+  $.ajax({
     url: "php/getNewsInfo.php",
-    data: { country_name },
-    method: "GET"
+    data: {
+      country_name: country_name
+    },
+    method: "GET",
+    success: function (response) {
+      response = JSON.parse(response);
+      console.log(response);
+      const data = response["articles"];
+      for (let i = 0; i < data.length; i++) {
+        $("#news_data").append(get_news_card(data[i]));
+      }
+      map.spin(false);
+      $("#newsModal").modal();
+    },
   });
-  const data = JSON.parse(response)["articles"];
-  data.forEach(newsItem => {
-    $("#news_data").append(getNewsCard(newsItem));
-  });
-  map.spin(false);
-  $("#newsModal").modal();
 }
 
-function getNewsCard(data) {
-  const card = `
-    <div class="card" style="width: 20rem;">
-      <img class="card-img-top" src="${data["urlToImage"]}" alt="News Image">
-      <div class="card-body">
-        <h5 class="card-title">${data["author"]}</h5>
-        <p class="card-text">${data["title"]}</p>
-        <a href="${data["url"]}" target="_blank" class="btn btn-primary">Details</a>
-      </div>
-    </div>
-  `;
+function get_news_card(data) {
+  const card =
+    '<div class="card" style="width: 20rem;"> <img class="card-img-top" src="' +
+    data["urlToImage"] +
+    '" alt="News Image"> <div class="card-body"> <h5 class="card-title">' +
+    data["author"] +
+    '</h5> <p class="card-text">' +
+    data["title"] +
+    '</p> <a href="' +
+    data["url"] +
+    '" target="_blank" class="btn btn-primary">Details</a> </div> </div>';
   return card;
 }
