@@ -378,15 +378,21 @@ function get_news_data() {
 }
 
 function get_news_card(data) {
-  const card =
-    '<div class="card" style="width: 20rem;"> <img class="card-img-top" src="' +
-    data["urlToImage"] +
-    '" alt="News Image"> <div class="card-body"> <h5 class="card-title">' +
+  let card = '<div class="card" style="width: 20rem;"> <div class="card-body"> <h5 class="card-title">' +
     data["author"] +
     '</h5> <p class="card-text">' +
     data["title"] +
-    '</p> <a href="' +
+    '</p>';
+
+  if (data["urlToImage"] !== null) {
+    card += '<img class="card-img-top" src="' + data["urlToImage"] + '" alt="News Image">';
+  } else {
+    card += '<p>Image not available</p>';
+  }
+
+  card += '<a href="' +
     data["url"] +
     '" target="_blank" class="btn btn-primary">Details</a> </div> </div>';
+
   return card;
 }
