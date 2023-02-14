@@ -1,29 +1,60 @@
 <?php
-$country_code = $_GET['country_code'];
 
-// Set the API endpoint and headers
-$endpoint = "https://covid-193.p.rapidapi.com/statistics?country=$country_code";
-$headers = array(
-  "X-RapidAPI-Host: covid-193.p.rapidapi.com",
-  "X-RapidAPI-Key: dfaf4e7ba9mshff70955459ecf6bp18bd2bjsn4976c478a896"
-);
+ 
 
-// Initialize a cURL session
-$ch = curl_init();
+$curl = curl_init();
 
-// Set the cURL options
-curl_setopt($ch, CURLOPT_URL, $endpoint);
-curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+ 
 
-// Execute the cURL request and retrieve the response
-$response = curl_exec($ch);
+curl_setopt_array($curl, [
 
-// Close the cURL session
-curl_close($ch);
+    CURLOPT_URL => 'https://covid-193.p.rapidapi.com/statistics?country='.$_REQUEST["countryName"],
 
-// Return the response to the client
-echo $response;
+    CURLOPT_RETURNTRANSFER => true,
+
+    CURLOPT_FOLLOWLOCATION => true,
+
+    CURLOPT_ENCODING => "",
+
+    CURLOPT_MAXREDIRS => 10,
+
+    CURLOPT_TIMEOUT => 30,
+
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+
+    CURLOPT_CUSTOMREQUEST => "GET",
+
+    CURLOPT_HTTPHEADER => [
+
+        "X-RapidAPI-Host: covid-193.p.rapidapi.com",
+
+        "X-RapidAPI-Key: dfaf4e7ba9mshff70955459ecf6bp18bd2bjsn4976c478a896"
+
+    ],
+
+]);
+
+ 
+
+$response = curl_exec($curl);
+
+$err = curl_error($curl);
+
+ 
+
+curl_close($curl);
+
+ 
+
+if ($err) {
+
+    echo json_encode("cURL Error #:" . $err);
+
+} else {
+
+    echo $response;
+
+}
 
 
 /*$curl = curl_init();
