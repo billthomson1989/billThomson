@@ -285,14 +285,16 @@ function show_popup() {
   }, 1000);
 }
 
+
 async function get_covid_data() {
   map.spin(true);
+  var countryName = $("#country_list option:selected").text(); //get the selected country name from the dropdown
   const response = await $.ajax({
     url: "php/getCovidInfo.php",
     type: "GET",
     dataType: "json",
     data: {
-      country_code: country_code_global,
+      countryName: countryName
     },
   });
 
