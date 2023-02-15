@@ -288,7 +288,7 @@ function show_popup() {
 
 async function get_covid_data() {
   map.spin(true);
-  var countryName = $("#country_list option:selected").text(); //get the selected country name from the dropdown
+  let countryName = $("#country_list option:selected").text(); //get the selected country name from the dropdown
   const response = await $.ajax({
     url: "php/getCovidInfo.php",
     type: "GET",
@@ -358,12 +358,13 @@ function get_weather_data() {
   });
 }
 function get_news_data() {
+  var countryName = $("#country_list option:selected").text(); //get the selected country name from the dropdown
   $("#news_data").html("");
   map.spin(true);
   $.ajax({
     url: "php/getNewsInfo.php",
     data: {
-      country_name: country_name
+      countryName: countryName
     },
     method: "GET",
     success: function (response) {
