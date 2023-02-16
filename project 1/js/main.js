@@ -370,9 +370,13 @@ function get_news_data() {
     success: function (response) {
       response = JSON.parse(response);
       console.log(response);
-      const data = response["articles"];
-      for (let i = 0; i < data.length; i++) {
-        $("#news_data").append(get_news_card(data[i]));
+      if (response.articles && response.articles.length > 0) {
+        const data = response.articles;
+        for (let i = 0; i < data.length; i++) {
+          $("#news_data").append(get_news_card(data[i]));
+        }
+      } else {
+        $("#news_data").html("<p>No news found for this country.</p>");
       }
       map.spin(false);
       $("#newsModal").modal();
