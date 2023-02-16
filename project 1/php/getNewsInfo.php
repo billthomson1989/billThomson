@@ -3,7 +3,7 @@ $countryName = $_GET['countryName'];
 
 $curl = curl_init();
 curl_setopt_array($curl, array(
-  CURLOPT_URL => "https://newsapi.org/v2/top-headlines/sources?".urlencode($countryName)."&apiKey=909b5e98f4194bae8dfeed80a03a3033",
+  CURLOPT_URL => "http://newsapi.org/v2/everything?q='.$countryName.'&sortBy=relevancy&apiKey=909b5e98f4194bae8dfeed80a03a3033",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
