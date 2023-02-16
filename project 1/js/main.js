@@ -358,13 +358,13 @@ function get_weather_data() {
   });
 }
 function get_news_data() {
-  var countryName = $("#country_list option:selected").text(); //get the selected country name from the dropdown
+  var countryCode = $("#country_list").val();
   $("#news_data").html("");
   map.spin(true);
   $.ajax({
     url: "php/getNewsInfo.php",
     data: {
-      countryName: countryName //pass the selected country name to the PHP script
+      countryCode: countryCode
     },
     method: "GET",
     success: function (response) {

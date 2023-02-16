@@ -1,9 +1,9 @@
 <?php
-$countryName = $_GET['countryName'];
+$countryCode = $_GET['countryCode'];
 
 $curl = curl_init();
 curl_setopt_array($curl, array(
-  CURLOPT_URL => "http://newsapi.org/v2/everything?q='.$countryName.'&sortBy=relevancy&apiKey=909b5e98f4194bae8dfeed80a03a3033",
+  CURLOPT_URL => "http://newsapi.org/v2/everything?q='.$countryCode.'&sortBy=relevancy&apiKey=909b5e98f4194bae8dfeed80a03a3033",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
@@ -33,3 +33,4 @@ if ($err) {
   echo $response;
 }
 ?>
+
