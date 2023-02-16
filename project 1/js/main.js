@@ -364,7 +364,7 @@ function get_news_data() {
   $.ajax({
     url: "php/getNewsInfo.php",
     data: {
-      countryName: countryName
+      countryName: countryName //pass the selected country name to the PHP script
     },
     method: "GET",
     success: function (response) {
@@ -391,6 +391,10 @@ function get_news_card(data) {
     card += '<img class="card-img-top" src="' + data["urlToImage"] + '" alt="News Image">';
   } else {
     card += '<p>Image not available</p>';
+  }
+  
+  if (data["description"] !== null) {
+    card += '<p>' + data["description"] + '</p>';
   }
 
   card += '<a href="' +

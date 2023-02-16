@@ -1,14 +1,7 @@
 <?php
 $curl = curl_init();
-$countryName = isset($_GET['countryName']) ? $_GET['countryName'] : 'gb';
-$apiKey = '909b5e98f4194bae8dfeed80a03a3033';
-
-$url = 'https://newsapi.org/v2/top-headlines?' .
-  'country=' . urlencode($countryName) .
-  '&apiKey=' . $apiKey;
-
 curl_setopt_array($curl, array(
-  CURLOPT_URL => $url,
+  CURLOPT_URL => "https://newsapi.org/v2/top-headlines?country=gb&apiKey=909b5e98f4194bae8dfeed80a03a3033",
   CURLOPT_RETURNTRANSFER => true,
   CURLOPT_ENCODING => "",
   CURLOPT_MAXREDIRS => 10,
@@ -38,5 +31,7 @@ if ($err) {
   echo $response;
 }
 ?>
+
+
 
 
