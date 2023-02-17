@@ -3,6 +3,11 @@
 $curl = curl_init();
 
 $countryName = $_GET['countryName'];
+if ($countryName == "United Kingdom") {
+  $countryName = "UK";
+} else if ($countryName == "United States") {
+  $countryName = "USA";
+}
 
 curl_setopt_array($curl, [
     CURLOPT_URL => "https://covid-193.p.rapidapi.com/statistics?country=".urlencode($countryName),
