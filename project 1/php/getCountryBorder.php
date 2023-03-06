@@ -22,3 +22,5 @@ if ($output_geom) {
     // Return an error message if the country code was not found
     echo json_encode(array("error" => "Country code not found"));
 }
+
+?>

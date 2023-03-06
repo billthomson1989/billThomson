@@ -63,32 +63,36 @@ function get_country_codes() {
   });
 }
 
-  async function get_user_location() {
-    if (navigator.geolocation) {
+async function get_user_location() {
+  if (navigator.geolocation) {
     try {
-    const position = await new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(resolve, reject);
-    });
-    const { latitude, longitude } = position.coords;
-    const coords = [latitude, longitude];
-  
-    map.spin(true);
-  
-    const response = await fetch(
-      `php/getCountryCodeFromLatLng.php?lat=${latitude}&lng=${longitude}&username=billthomson1989`
-    );
-    const json = await response.json();
-  
-    map.spin(false);
-  
-    const country_code = json.countryCode;
-    $("#country_list").val(country_code).trigger("change");
-  } catch (error) {
-    alert("Could not get your position!");
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+      const { latitude, longitude } = position.coords;
+      const coords = [latitude, longitude];
+      
+      map.spin(true);
+      
+      const response = await fetch(
+        `php/getCountryCodeFromLatLng.php?lat=${latitude}&lng=${longitude}&username=billthomson1989`
+      );
+      const json = await response.json();
+      
+      map.spin(false);
+      
+      const country_code = json.countryCode;
+      $("#country_list").val(country_code).trigger("change");
+    } catch (error) {
+      alert("Could not get your position!");
+    }
+  } else {
+    alert("Geolocation is not supported by your browser.");
   }
-  
-  }
-  }
+}
+
+// Call the get_user_location function when the page loads
+window.addEventListener('load', get_user_location);
 
   async function get_country_border(country_code) {
     try {
@@ -213,7 +217,6 @@ function zoomToCountry(country_code) {
   get_country_border(country_code);
   get_country_info(country_code);
 }
-
 // Function to retrieve country information and display it
 async function get_country_info(country_code) {
   // Animate the country info popup to slide into view
@@ -310,6 +313,7 @@ async function get_covid_data() {
   map.spin(false);
   $("#coronoModal").modal();
 }
+
 function get_weather_data() {
   map.spin(true);
   $.ajax({

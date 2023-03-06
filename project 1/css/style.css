@@ -36,6 +36,22 @@ body {
   width: 100%;
 }
 
+.card-header i {
+  margin-right: 16px;
+}
+
+.card-header h2 {
+  display: inline;
+}
+
+.card-body {
+  overflow-y: auto;
+}
+
+.country_flag img {
+  height: 50px;
+}
+
 #country_info {
   position: absolute;
   left: -300px;
