@@ -56,43 +56,39 @@ function get_country_codes() {
       let option = "";
       for (country of countries) {
         option +=
-          '<option value="' + country[1] + '">' + country[0] + "</option>";
+          '<option value="' + country.code + '">' + country.name + "</option>";
       }
       $("#country_list").append(option).select2();
     },
   });
 }
 
-async function get_user_location() {
-  if (navigator.geolocation) {
+  async function get_user_location() {
+    if (navigator.geolocation) {
     try {
-      const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
-      const { latitude, longitude } = position.coords;
-      const coords = [latitude, longitude];
-      
-      map.spin(true);
-      
-      const response = await fetch(
-        `php/getCountryCodeFromLatLng.php?lat=${latitude}&lng=${longitude}&username=billthomson1989`
-      );
-      const json = await response.json();
-      
-      map.spin(false);
-      
-      const country_code = json.countryCode;
-      $("#country_list").val(country_code).trigger("change");
-    } catch (error) {
-      alert("Could not get your position!");
-    }
-  } else {
-    alert("Geolocation is not supported by your browser.");
+    const position = await new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+    const { latitude, longitude } = position.coords;
+    const coords = [latitude, longitude];
+  
+    map.spin(true);
+  
+    const response = await fetch(
+      `php/getCountryCodeFromLatLng.php?lat=${latitude}&lng=${longitude}&username=billthomson1989`
+    );
+    const json = await response.json();
+  
+    map.spin(false);
+  
+    const country_code = json.countryCode;
+    $("#country_list").val(country_code).trigger("change");
+  } catch (error) {
+    alert("Could not get your position!");
   }
-}
-
-// Call the get_user_location function when the page loads
-window.addEventListener('load', get_user_location);
+  
+  }
+  }
 
   async function get_country_border(country_code) {
     try {

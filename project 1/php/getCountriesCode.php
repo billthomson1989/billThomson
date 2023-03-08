@@ -9,6 +9,7 @@ for($i=0;$i<sizeof($features);$i++){
     $feature = $features[$i];
     $country_name = $feature->properties->name;
     $country_iso_a2 = $feature->properties->iso_a2;
+    $obj = (object)["name" => $country_name, "iso" => $country_iso_a2];
     $array = [$country_name,$country_iso_a2];
     array_push($all_countries, $array);
 }
