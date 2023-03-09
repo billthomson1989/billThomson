@@ -56,7 +56,7 @@ function get_country_codes() {
       let option = "";
       for (country of countries) {
         option +=
-          '<option value="' + country.code + '">' + country.name + "</option>";
+          '<option value="' + country[1] + '">' + country[0] + "</option>";
       }
       $("#country_list").append(option).select2();
     },
@@ -213,6 +213,7 @@ function zoomToCountry(country_code) {
   get_country_border(country_code);
   get_country_info(country_code);
 }
+
 // Function to retrieve country information and display it
 async function get_country_info(country_code) {
   // Animate the country info popup to slide into view
@@ -309,7 +310,6 @@ async function get_covid_data() {
   map.spin(false);
   $("#coronoModal").modal();
 }
-
 function get_weather_data() {
   map.spin(true);
   $.ajax({
