@@ -1,50 +1,46 @@
 // Variables to store the various layers on the map
 let country_boundary;
 let map;
-let cities_fg;
 let wikipedia_fg;
+let cities_fg;
 let country_code_global = "";
 let country_name;
 let lat;
 let lng;
 
-// JQuery code to run when the document is ready
-$(document).ready(function () {
-  // Setting max height of the card body
-  $("#country_info .card-body").css("max-height", `${$(window).height() - 81}px`);
+// Initializing the map and setting its view to [0, 0] with zoom level 1.5
+map = L.map("map", {
+  attributionControl: false,
+}).setView([0, 0], 1.5);
 
-  // Initializing the map and setting its view to [0, 0] with zoom level 1.5
-  map = L.map("map", {
-    attributionControl: false,
-  }).setView([0, 0], 1.5);
+// Adding the scale control to the map
+L.control.scale().addTo(map);
+map.zoomControl.setPosition("topright");
 
-  // Adding the scale control to the map
-  L.control.scale().addTo(map);
-  map.zoomControl.setPosition("topright");
+// Adding the OpenStreetMap tile layer to the map
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution:
+    '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+}).addTo(map);
 
-  // Adding the OpenStreetMap tile layer to the map
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  }).addTo(map);
+// Initializing the country boundary layer
+country_boundary = new L.geoJson().addTo(map);
 
-  // Initializing the country boundary layer
-  country_boundary = new L.geoJson().addTo(map);
+// Initializing the marker cluster layer
+let markers = L.markerClusterGroup();
+map.addLayer(markers);
 
-  // Initializing the cities layer
-  cities_fg = new L.FeatureGroup();
-  map.addLayer(cities_fg);
+// Initializing the Wikipedia layer
+wikipedia_fg = new L.featureGroup().addTo(map);
 
-  // Initializing the Wikipedia layer
-  wikipedia_fg = new L.FeatureGroup();
-  map.addLayer(wikipedia_fg);
+// Initializing the cities layer
+cities_fg = new L.featureGroup().addTo(map);
 
-  // Fetching the country codes
-  get_country_codes();
+// Fetching the country codes
+get_country_codes();
 
-  // Fetching the user's location
-  get_user_location();
-});
+// Fetching the user's location
+get_user_location();
 
 // Function to fetch the country codes from a PHP file and populate a select list
 function get_country_codes() {
@@ -59,45 +55,51 @@ function get_country_codes() {
           '<option value="' + country[1] + '">' + country[0] + "</option>";
       }
       $("#country_list").append(option).select2();
+      // Attach an event listener to the select element
+      $("#country_list").change(function() {
+        const country_code = $(this).val();
+        get_country_border(country_code);
+      });
     },
   });
 }
 
-  async function get_user_location() {
-    if (navigator.geolocation) {
-    try {
-    const position = await new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(resolve, reject);
-    });
-    const { latitude, longitude } = position.coords;
-    const coords = [latitude, longitude];
-  
-    map.spin(true);
-  
-    const response = await fetch(
-      `php/getCountryCodeFromLatLng.php?lat=${latitude}&lng=${longitude}&username=billthomson1989`
-    );
-    const json = await response.json();
-  
-    map.spin(false);
-  
-    const country_code = json.countryCode;
-    $("#country_list").val(country_code).trigger("change");
-  } catch (error) {
-    alert("Could not get your position!");
-  }
-  
-  }
-  }
+async function get_user_location() {
+  if (navigator.geolocation) {
+  try {
+  const position = await new Promise((resolve, reject) => {
+  navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+  const { latitude, longitude } = position.coords;
+  const coords = [latitude, longitude];
 
-  async function get_country_border(country_code) {
-    try {
+  map.spin(true);
+
+  const response = await fetch(
+    `php/getCountryCodeFromLatLng.php?lat=${latitude}&lng=${longitude}&username=billthomson1989`
+  );
+  const json = await response.json();
+
+  map.spin(false);
+
+  const country_code = json.countryCode;
+  $("#country_list").val(country_code).trigger("change");
+} catch (error) {
+  alert("Could not get your position!");
+}
+
+}
+}
+
+let cities_cluster = null;
+async function get_country_border(country_code) {
+  try {
     const response = await $.ajax({
-    url: "php/getCountryBorder.php",
-    type: "GET",
-    data: {
-    country_code: country_code
-    },
+      url: "php/getCountryBorder.php",
+      type: "GET",
+      data: {
+        country_code: country_code
+      },
     });
     const json = JSON.parse(response);
     country_boundary.clearLayers();
@@ -109,13 +111,26 @@ function get_country_codes() {
     const north = bounds.getNorth();
     const south = bounds.getSouth();
     await Promise.all([
-    get_nearby_cities(east, west, north, south),
-    get_nearby_wikipedia(east, west, north, south),
+      get_nearby_cities(east, west, north, south),
+      get_nearby_wikipedia(east, west, north, south),
     ]);
-    } catch (error) {
+    // Add marker cluster group to map
+    if (cities_cluster) {
+      map.removeLayer(cities_cluster);
+    }
+    if (cities_fg) {
+      if (!cities_cluster) {
+        cities_cluster = L.markerClusterGroup();
+      }
+      cities_cluster.clearLayers();
+      cities_cluster.addLayer(cities_fg);
+      map.addLayer(cities_cluster);
+    }
+
+  } catch (error) {
     console.error(error);
-    }
-    }
+  }
+}
 
     async function get_nearby_cities(east, west, north, south) {
       // Clear any existing layers in the cities feature group
@@ -141,7 +156,9 @@ function get_country_codes() {
         shape: "circle",
         prefix: "fa",
       });
-      // Loop through the city data and add markers to the cities feature group
+      // Create a MarkerClusterGroup object for the city markers
+      const city_markers = L.markerClusterGroup();
+      // Loop through the city data and add markers to the marker cluster group
       data.forEach((city) => {
         const marker = L.marker([city.lat, city.lng], {
           icon: city_icon,
@@ -151,50 +168,55 @@ function get_country_codes() {
           "</b><br>Population: " +
           parseInt(city.population).toLocaleString("en")
         );
-        cities_fg.addLayer(marker);
+        city_markers.addLayer(marker);
       });
+      // Add the marker cluster group to the cities feature group
+      cities_fg.addLayer(city_markers);
     }
 
-// Function to get nearby Wikipedia articles based on the provided coordinates
+    // Define wikipedia markers layer group outside the function
+const wikipedia_markers = L.markerClusterGroup();
+
 async function get_nearby_wikipedia(east, west, north, south) {
   try {
-  // Clear any existing Wikipedia markers from the map
-  wikipedia_fg.clearLayers();
+    // Clear any existing Wikipedia markers from the map
+    wikipedia_fg.clearLayers();
 
-  // Send an AJAX GET request to the specified PHP script
-  const response = await fetch(`php/getNearByWikipedia.php?east=${east}&west=${west}&north=${north}&south=${south}&username=billthomson1989`);
-  const json = await response.json();
-  
-  // Log the data to the console for debugging purposes
-  console.log(json);
-  
-  // Get the array of Wikipedia articles from the data
-  const data = json.geonames;
-  // Create a custom icon for the Wikipedia markers
-  const wiki_icon = L.ExtraMarkers.icon({
-    icon: "fa-wikipedia-w", // Icon class
-    markerColor: "blue", // Color
-    shape: "square", // Shape
-    prefix: "fa", // Icon prefix
-  });
-  
-  // Loop through each Wikipedia article in the data array using the forEach method
-  data.forEach((item) => {
-    // Create a marker for the current article
-    const marker = L.marker([item.lat, item.lng], {
-      icon: wiki_icon, // Use the custom icon
-    }).bindPopup(
-      // The content of the popup for the marker
-      `<img src='${item.thumbnailImg}' width='100px' height='100px' alt='${item.title}'><br><b>${item.title}</b><br><a href='https://${item.wikipediaUrl}' target='_blank'>Wikipedia Link</a>`
-    );
-    // Add the marker to the Wikipedia markers layer group
-    wikipedia_fg.addLayer(marker);
-  });
-  
+    // Send an AJAX GET request to the specified PHP script
+    const response = await fetch(`php/getNearByWikipedia.php?east=${east}&west=${west}&north=${north}&south=${south}&username=billthomson1989`);
+    const json = await response.json();
+
+    // Get the array of Wikipedia articles from the data
+    const data = json.geonames;
+
+    // Create a custom icon for the Wikipedia markers
+    const wiki_icon = L.ExtraMarkers.icon({
+      icon: "fa-wikipedia-w", // Icon class
+      markerColor: "blue", // Color
+      shape: "square", // Shape
+      prefix: "fa", // Icon prefix
+    });
+
+    // Loop through each Wikipedia article in the data array
+    data.forEach((item) => {
+      // Create a marker for the current article
+      const marker = L.marker([item.lat, item.lng], {
+        icon: wiki_icon,
+      }).bindPopup(
+        `<img src='${item.thumbnailImg}' width='100px' height='100px' alt='${item.title}'><br><b>${item.title}</b><br><a href='https://${item.wikipediaUrl}' target='_blank'>Wikipedia Link</a>`
+      );
+
+      // Add the marker to the Wikipedia markers layer group
+      wikipedia_markers.addLayer(marker);
+    });
+
+    // Add the Wikipedia markers cluster group to the map
+    map.addLayer(wikipedia_markers);
+
   } catch (error) {
-  console.error(error);
+    console.error(error);
   }
-  }
+}
 
 function polystyle() {
   return {
@@ -213,6 +235,14 @@ function zoomToCountry(country_code) {
   get_country_border(country_code);
   get_country_info(country_code);
 }
+
+// Add an event listener to the country_list select element
+$("#country_list").on("change", function() {
+  const country_code = $(this).val(); // Get the selected country code
+  if (country_code) {
+    get_country_info(country_code); // Call the get_country_info function with the selected country code
+  }
+});
 
 // Function to retrieve country information and display it
 async function get_country_info(country_code) {
@@ -252,7 +282,7 @@ async function get_country_info(country_code) {
     // Update the country information on the page
     lat = details.latlng[0];
     lng = details.latlng[1];
-    $("#country_name").html(country_name);
+    $("#country_name").html(details.name);
     $("#country_capital").html(details.capital);
     $("#country_population").html(details.population);
     $("#country_flag").attr("src", details.flag);
@@ -265,24 +295,6 @@ async function get_country_info(country_code) {
     // Log any errors that occur while retrieving the country information
     console.error(error);
   }
-}
-
-function hide_popup() {
-  $("#country_info").animate({
-    left: "-999px"
-  }, 1000);
-  $(".pull_country_info_popup").animate({
-    left: "0"
-  }, 1000);
-}
-
-function show_popup() {
-  $("#country_info").animate({
-    left: "5px"
-  }, 1000);
-  $(".pull_country_info_popup").animate({
-    left: "-40px"
-  }, 1000);
 }
 
 
