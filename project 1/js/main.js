@@ -244,6 +244,19 @@ $("#country_list").on("change", function() {
   }
 });
 
+const countryButton = L.easyButton({
+  states: [{
+    stateName: 'show-country-info',
+    icon: 'fa-globe-americas fa-2x center-align',
+    title: 'Country Information',
+    onClick: function() {
+      const country_code = // get the country code from the map
+      get_country_info(country_code);
+    }
+  }]
+});
+
+countryButton.addTo(map);
 // Function to retrieve country information and display it
 async function get_country_info(country_code) {
   // Animate the country info popup to slide into view
@@ -298,30 +311,58 @@ async function get_country_info(country_code) {
 }
 
 
+const covidButton = L.easyButton({
+  states: [{
+    stateName: 'getCovidData',
+    icon: 'fal fa-virus',
+    title: 'Get Covid data',
+    onClick: get_covid_data
+  }]
+});
+
+covidButton.addTo(map);
+
 async function get_covid_data() {
   map.spin(true);
-  let countryName = $("#country_list option:selected").text(); //get the selected country name from the dropdown
-  const response = await $.ajax({
-    url: "php/getCovidInfo.php",
-    type: "GET",
-    dataType: "json",
-    data: {
-      countryName: countryName
-    },
-  });
+  const countryName = $("#country_list option:selected").text();
+  try {
+    const response = await $.ajax({
+      url: "php/getCovidInfo.php",
+      type: "GET",
+      dataType: "json",
+      data: {
+        countryName
+      },
+    });
 
-  const details = response.response;
-  details.forEach((covidData) => {
-    $("#covid_total_cases").html(covidData.cases.total);
-    $("#covid_active").html(covidData.cases.active);
-    $("#covid_recovered").html(covidData.cases.recovered);
-    $("#covid_deaths").html(covidData.deaths.total);
-    $("#covid_todayCases").html(covidData.cases.new);
-  });
-
-  map.spin(false);
-  $("#coronoModal").modal();
+    const details = response.response;
+    details.forEach((covidData) => {
+      $("#covid_total_cases").html(covidData.cases.total);
+      $("#covid_active").html(covidData.cases.active);
+      $("#covid_recovered").html(covidData.cases.recovered);
+      $("#covid_deaths").html(covidData.deaths.total);
+      $("#covid_todayCases").html(covidData.cases.new);
+    });
+    
+    $("#coronoModal").modal();
+  } catch (error) {
+    console.log(error);
+  } finally {
+    map.spin(false);
+  }
 }
+
+const weatherButton = L.easyButton({
+  states: [{
+    stateName: 'getWeatherData',
+    icon: 'fas fa-cloud-sun',
+    title: 'Get weather data',
+    onClick: get_weather_data
+  }]
+});
+
+weatherButton.addTo(map);
+
 function get_weather_data() {
   map.spin(true);
   $.ajax({
@@ -369,6 +410,18 @@ function get_weather_data() {
     },
   });
 }
+
+const newsButton = L.easyButton({
+  states: [{
+    stateName: 'getNewsData',
+    icon: 'fas fa-newspaper',
+    title: 'Get News',
+    onClick: get_news_data
+  }]
+});
+
+newsButton.addTo(map);
+
 function get_news_data() {
   var countryCode = $("#country_list").val();
   $("#news_data").html("");

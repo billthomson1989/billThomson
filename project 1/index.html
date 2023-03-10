@@ -8,9 +8,10 @@
   <title>The Gazetteer</title>
   <!-- Include Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+<!-- Easy Button -->
+<link rel="stylesheet" href="css/easy-button.css" />
 
   <!-- Marker Cluster -->
-
 <link rel="stylesheet" href="css/MarkerCluster.css">
 <link rel="stylesheet" href="css/MarkerCluster.Default.css">
 
@@ -96,18 +97,6 @@
               </table>
               <div class="text-center">
                 <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                  <button type="button" class="btn btn-danger" data-toggle="modal" data-target=""
-                    onclick="get_covid_data();">
-                    <i class="fal fa-virus"></i> Covid
-                  </button>
-                  <button type="button" class="btn btn-success" data-toggle="modal" data-target=""
-                    onclick="get_weather_data();">
-                    <i class="fas fa-cloud-sun"></i> Weather
-                  </button>
-                  <button type="button" class="btn btn-warning" data-toggle="modal" data-target=""
-                    onclick="get_news_data();">
-                    <i class="far fa-newspaper"></i> News
-                  </button>
                 </div>
               </div>
             </div>
@@ -220,6 +209,7 @@
   <script src="js/bootstrap.min.js"></script>
   <script src="js/leaflet.extra-markers.min.js"></script>
   <script src="js/leaflet.markercluster.js"></script>
+  <script src="js/easy-button.js"></script>
 
   <script src="js/main.js"></script>
 </body>
