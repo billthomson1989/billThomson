@@ -249,14 +249,17 @@ const countryButton = L.easyButton({
     stateName: 'show-country-info',
     icon: 'fa-globe-americas fa-2x center-align',
     title: 'Country Information',
-    onClick: function() {
-      const country_code = // get the country code from the map
-      get_country_info(country_code);
-    }
+    onClick: showCountryInfo
   }]
 });
 
 countryButton.addTo(map);
+
+function showCountryInfo() {
+  const country_code = $("#country_list").val();
+  get_country_info(country_code);
+}
+
 // Function to retrieve country information and display it
 async function get_country_info(country_code) {
   // Animate the country info popup to slide into view
