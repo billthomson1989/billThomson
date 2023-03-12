@@ -109,36 +109,6 @@ body {
   color: #555;
 }
 
-.btn-danger {
-  color:#fff;
-  background-color:green;
-  border-color:green
- }
- .btn-danger:hover {
-  color:#fff;
-  background-color:green;
-  border-color:green
- }
- .btn-success {
-  color: #fff;
-  background-color: blue;
-  border-color: blue;
-}
-.btn-success:hover {
-  color: #fff;
-  background-color: blue;
-  border-color: blue;
-}
-.btn-warning:hover {
-  color: #212529;
-  background-color: red;
-  border-color: red;
-}
-.btn-warning {
-  color: #212529;
-  background-color: red;
-  border-color: red;
-}
 .weather_card {
     margin: 0 auto;
     padding: 5px 30px;
@@ -228,4 +198,90 @@ body {
     height:auto;
     background-color: white;
     border-radius: 12px;
+}
+
+/* Table styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+th {
+  font-weight: bold;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+  vertical-align: top;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Modal styles */
+#holidayModal {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#holidayModal .modal-dialog {
+  max-width: 800px;
+}
+
+#holidayModal .modal-header {
+  background-color: #ffc107;
+  color: #fff;
+  border-bottom: none;
+}
+
+#holidayModal .modal-title {
+  font-weight: bold;
+}
+
+#holidayModal .modal-content {
+  border-radius: 0;
+}
+
+#holidayModal .modal-footer {
+  border-top: none;
+}
+
+#holidayModal .btn-secondary {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+/* Fonts */
+.holiday-font {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.text-warning {
+  color: #ffc107;
+  font-weight: bold;
+}
+
+.fa-globe-americas {
+  color: rgb(204, 50, 4);
+}
+.fa-temperature-low {
+  color: rgb(104, 217, 251);
+}
+.fa-viruses {
+  color: rgb(58, 180, 21);
+}
+.fa-city {
+  color: rgb(255, 241, 45);
+}
+.fa-umbrella-beach {
+  color: rgb(255, 142, 50);
+}
+.fa-newspaper {
+  color: rgb(171, 45, 255);
 }

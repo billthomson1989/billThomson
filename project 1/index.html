@@ -201,7 +201,7 @@
     </div>
   </div>
    <!-- Holiday Data -->
-  <div  class="modal fade"  id="holidayModal">
+  <div class="modal fade" id="holidayModal">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -216,16 +216,27 @@
               <tr><td> Name </td><td> Date </td></tr>
             </thead>
             <tbody id="tableContainer" class="holiday-font">
+              <tr>
+                <th>National Holiday</th>
+                <td id="nationalHoliday"></td>
+              </tr>
+              <tr>
+                <th>Other Holidays</th>
+                <td id="otherHolidays"></td>
+              </tr>
             </tbody>
+            
           </table>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">
               Close
             </button>
+          </div>
         </div>
-        </div>
+      </div>
     </div>
-</div>
+  </div>
+
   <script src="js/leaflet.js"></script>
   <script src="js/fontawesome.js"></script>
   <script src="js/spin.min.js"></script>

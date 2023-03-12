@@ -500,19 +500,20 @@ function get_nationalHolidays_data() {
 
 function nationalHolidays(countrycode) {
   $.ajax({
-    url: "./php/getHolidays.php",
-    type: 'POST',
+    url: "php/getNationalHolidays.php",
+    type: 'GET',
     dataType: 'json',
     data: {
       countrycode,
     },
     success: function(result) {
-      $('#nationalHolidaysCountry').html('National holidays in ' + $("#country_list option:selected").text() + ' for 2023');
+      $('#nationalHoliday').html(result[0].localName);
       $('#tableContainer').empty();
-      result.forEach(function(holidayEvents) {
+      for (var i = 1; i < result.length; i++) {
         $('#tableContainer')
-          .append('<tr><td>' + holidayEvents['eventName'] + '</td><td>' + new Date(holidayEvents['date']).toString("MMMM dS, yyyy") + '</td></tr>');
-      });
+          .append('<tr><td>' + result[i].localName + '</td><td>' + result[i].date + '</td></tr>');
+      }
+      $('#holidayModal').modal('show');
     },
     error: function(jqXHR, textStatus, errorThrown) {
       console.log(errorThrown);
