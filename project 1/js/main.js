@@ -248,7 +248,7 @@ $("#country_list").on("change", function() {
 const countryButton = L.easyButton({
   states: [{
     stateName: 'show-country-info',
-    icon: 'fa-globe-americas fa-2x center-align',
+    icon: 'fa-globe fa-2x center-align',
     title: 'Country Information',
     onClick: showCountryInfo
   }]
@@ -323,7 +323,7 @@ async function get_country_info(country_code) {
 const covidButton = L.easyButton({
   states: [{
     stateName: 'getCovidData',
-    icon: 'fa-virus-covid',
+    icon: 'fa-virus-covid fa-2x center-align',
     title: 'Get Covid data',
     onClick: get_covid_data
   }]
@@ -364,7 +364,7 @@ async function get_covid_data() {
 const weatherButton = L.easyButton({
   states: [{
     stateName: 'getWeatherData',
-    icon: 'fas fa-cloud-sun',
+    icon: 'fas fa-cloud-sun fa-2x center-align',
     title: 'Get weather data',
     onClick: get_weather_data
   }]
@@ -423,7 +423,7 @@ function get_weather_data() {
 const newsButton = L.easyButton({
   states: [{
     stateName: 'getNewsData',
-    icon: 'fas fa-newspaper',
+    icon: 'fas fa-newspaper fa-2x center-align',
     title: 'Get News',
     onClick: get_news_data
   }]
@@ -485,7 +485,7 @@ function get_news_card(data) {
 const holidayButton = L.easyButton({
   states: [{
     stateName: 'getnationalholidayData',
-    icon: 'fa fa-umbrella-beach',
+    icon: 'fa fa-umbrella-beach fa-2x center-align',
     title: 'Get national holiday data',
     onClick: get_nationalHolidays_data
   }]

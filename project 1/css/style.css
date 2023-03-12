@@ -267,13 +267,13 @@ tbody tr:nth-child(even) {
   font-weight: bold;
 }
 
-.fa-globe-americas {
-  color: rgb(204, 50, 4);
+.fa-globe {
+  color: rgb(18, 6, 241);
 }
-.fa-temperature-low {
+.fa-cloud-sun {
   color: rgb(104, 217, 251);
 }
-.fa-viruses {
+.fa-virus-covid {
   color: rgb(58, 180, 21);
 }
 .fa-city {
