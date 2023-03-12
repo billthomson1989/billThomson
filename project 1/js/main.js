@@ -233,7 +233,7 @@ function zoomToCountry(country_code) {
   country_name = $("#country_list option:selected").text();
   country_code_global = country_code;
   get_country_border(country_code);
-  get_country_info(country_code);
+  hideCountryInfo();
 }
 
 // Add an event listener to the country_list select element
@@ -241,6 +241,7 @@ $("#country_list").on("change", function() {
   const country_code = $(this).val(); // Get the selected country code
   if (country_code) {
     get_country_info(country_code); // Call the get_country_info function with the selected country code
+    hideCountryInfo(); // hide the country info box when a new country is selected
   }
 });
 
@@ -258,10 +259,10 @@ countryButton.addTo(map);
 function showCountryInfo() {
   const country_code = $("#country_list").val();
   get_country_info(country_code);
+  showCountryInfoBox(); // show the country info box when the button is pressed
 }
 
-// Function to retrieve country information and display it
-async function get_country_info(country_code) {
+function showCountryInfoBox() {
   // Animate the country info popup to slide into view
   if ($("#country_info").css("left") !== "5px") {
     $("#country_info").animate({
@@ -271,13 +272,22 @@ async function get_country_info(country_code) {
       left: "-40px"
     }, 1000);
   }
-  
-  // Show the loading spinner on the map
-  map.spin(true, {
-    top: 180,
-    left: 150
-  });
+}
 
+function hideCountryInfo() {
+  // Animate the country info popup to slide out of view
+  if ($("#country_info").css("left") === "5px") {
+    $("#country_info").animate({
+      left: "-700px"
+    }, 1000);
+    $(".pull_country_info_popup").animate({
+      left: "-30px"
+    }, 1000);
+  }
+}
+
+// Function to retrieve country information and display it
+async function get_country_info(country_code) {
   try {
     // Send a GET request to the server to retrieve country information
     const response = await $.ajax({
@@ -288,12 +298,8 @@ async function get_country_info(country_code) {
       },
     });
 
-    // Hide the loading spinner on the map
-    map.spin(false);
-
     // Parse the JSON response from the server
     const details = $.parseJSON(response);
-    console.log(details);
 
     // Update the country information on the page
     lat = details.latlng[0];

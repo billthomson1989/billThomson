@@ -54,7 +54,7 @@ body {
 
 #country_info {
   position: absolute;
-  left: -300px;
+  left: -400px;
   top: 10px;
   z-index: 1000;
   padding: 0;
