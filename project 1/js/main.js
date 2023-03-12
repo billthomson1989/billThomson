@@ -306,7 +306,7 @@ async function get_country_info(country_code) {
     lng = details.latlng[1];
     $("#country_name").html(details.name);
     $("#country_capital").html(details.capital);
-    $("#country_population").html(details.population);
+    $("#country_population").html(numeral(details.population).format('0,0'));
     $("#country_flag").attr("src", details.flag);
     $("#country_currency").html(details.currencies[0]["name"]);
     $("#country_wikipedia").attr(
@@ -346,8 +346,11 @@ async function get_covid_data() {
 
     const details = response.response;
     details.forEach((covidData) => {
-      $("#covid_total_cases").html(covidData.cases.total);
-      $("#covid_active").html(covidData.cases.active);
+      const numeralTotalCases = numeral(covidData.cases.total);
+      const numeralActiveCases = numeral(covidData.cases.active);
+
+      $("#covid_total_cases").html(numeralTotalCases.format('0,0'));
+      $("#covid_active").html(numeralActiveCases.format('0,0'));
       $("#covid_recovered").html(covidData.cases.recovered);
       $("#covid_deaths").html(covidData.deaths.total);
       $("#covid_todayCases").html(covidData.cases.new);
@@ -360,7 +363,6 @@ async function get_covid_data() {
     map.spin(false);
   }
 }
-
 const weatherButton = L.easyButton({
   states: [{
     stateName: 'getWeatherData',
@@ -391,9 +393,11 @@ function get_weather_data() {
       for (let i = 0; i < 5; i++) {
         const d = details["daily"][i];
         const day = days[new Date(d["dt"] * 1000).getDay()];
+        const maxTemp = numeral(d["temp"]["max"]).format("0");
+        const minTemp = numeral(d["temp"]["min"]).format("0");
         $("#first_row").append("<td>" + day + "</td>");
-        $("#second_row").append("<td>" + parseInt(d["temp"]["max"]) + "°</td>");
-        $("#third_row").append("<td>" + parseInt(d["temp"]["min"]) + "°</td>");
+        $("#second_row").append("<td>" + maxTemp + "°</td>");
+        $("#third_row").append("<td>" + minTemp + "°</td>");
       }
       $("#weather_city_name").html(details.timezone);
       let daily = details["daily"][0]["weather"][0];
