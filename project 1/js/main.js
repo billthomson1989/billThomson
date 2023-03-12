@@ -323,7 +323,7 @@ async function get_country_info(country_code) {
 const covidButton = L.easyButton({
   states: [{
     stateName: 'getCovidData',
-    icon: 'fal fa-virus',
+    icon: 'fa-virus-covid',
     title: 'Get Covid data',
     onClick: get_covid_data
   }]
@@ -480,4 +480,42 @@ function get_news_card(data) {
     '" target="_blank" class="btn btn-primary">Details</a> </div> </div>';
 
   return card;
+}
+
+const holidayButton = L.easyButton({
+  states: [{
+    stateName: 'getnationalholidayData',
+    icon: 'fa fa-umbrella-beach',
+    title: 'Get national holiday data',
+    onClick: get_nationalHolidays_data
+  }]
+});
+
+holidayButton.addTo(map);
+
+function get_nationalHolidays_data() {
+  const countrycode = $("#country_list").val();
+  nationalHolidays(countrycode);
+}
+
+function nationalHolidays(countrycode) {
+  $.ajax({
+    url: "./php/getHolidays.php",
+    type: 'POST',
+    dataType: 'json',
+    data: {
+      countrycode,
+    },
+    success: function(result) {
+      $('#nationalHolidaysCountry').html('National holidays in ' + $("#country_list option:selected").text() + ' for 2023');
+      $('#tableContainer').empty();
+      result.forEach(function(holidayEvents) {
+        $('#tableContainer')
+          .append('<tr><td>' + holidayEvents['eventName'] + '</td><td>' + new Date(holidayEvents['date']).toString("MMMM dS, yyyy") + '</td></tr>');
+      });
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      console.log(errorThrown);
+    }
+  });
 }
