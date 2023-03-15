@@ -263,27 +263,26 @@ function showCountryInfo() {
 }
 
 function showCountryInfoBox() {
-  // Animate the country info popup to slide into view
-  if ($("#country_info").css("left") !== "5px") {
-    $("#country_info").animate({
-      left: "5px"
-    }, 1000);
-    $(".pull_country_info_popup").animate({
-      left: "-40px"
-    }, 1000);
-  }
+  // Show the country info popup without animation
+  $("#country_info").css({
+    opacity: "1",
+    top: "50px",
+    left: "280px"
+  });
+  $(".pull_country_info_popup").css({
+    left: "-40px"
+  });
 }
 
 function hideCountryInfo() {
-  // Animate the country info popup to slide out of view
-  if ($("#country_info").css("left") === "5px") {
-    $("#country_info").animate({
-      left: "-700px"
-    }, 1000);
-    $(".pull_country_info_popup").animate({
-      left: "-30px"
-    }, 1000);
-  }
+  // Hide the country info popup without animation
+  $("#country_info").css({
+    opacity: "0",
+    top: "-500px"
+  });
+  $(".pull_country_info_popup").css({
+    left: "-30px"
+  });
 }
 
 // Function to retrieve country information and display it

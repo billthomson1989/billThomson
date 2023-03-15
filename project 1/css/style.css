@@ -54,7 +54,7 @@ body {
 
 #country_info {
   position: absolute;
-  left: -400px;
+  left: -120%;
   top: 10px;
   z-index: 1000;
   padding: 0;
@@ -64,13 +64,15 @@ body {
   background-color: silver;
   box-shadow: 0 2px 6px rgba(0,0,0,0.26);
   border-radius: 5px;
+  transform: translateX(-50%);
 }
 
 .pull_country_info_popup {
   position: absolute;
   top: 29px;
   z-index: 1002;
-  left: -40px;
+  left: 50%;
+  transform: translateX(-50%);
   border-radius: 0 5px 5px 0;
   font-size: 24px;
   color: #555;
