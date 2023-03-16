@@ -110,6 +110,12 @@ async function get_country_border(country_code) {
     const west = bounds.getWest();
     const north = bounds.getNorth();
     const south = bounds.getSouth();
+
+    // Clear previous markers
+    if (cities_fg) {
+      cities_fg.clearLayers();
+    }
+
     await Promise.all([
       get_nearby_cities(east, west, north, south),
       get_nearby_wikipedia(east, west, north, south),
@@ -177,10 +183,12 @@ async function get_country_border(country_code) {
     // Define wikipedia markers layer group outside the function
 const wikipedia_markers = L.markerClusterGroup();
 
+
 async function get_nearby_wikipedia(east, west, north, south) {
   try {
     // Clear any existing Wikipedia markers from the map
     wikipedia_fg.clearLayers();
+    wikipedia_markers.clearLayers();
 
     // Send an AJAX GET request to the specified PHP script
     const response = await fetch(`php/getNearByWikipedia.php?east=${east}&west=${west}&north=${north}&south=${south}&username=billthomson1989`);
@@ -248,7 +256,7 @@ $("#country_list").on("change", function() {
 const countryButton = L.easyButton({
   states: [{
     stateName: 'show-country-info',
-    icon: 'fa-globe fa-2x center-align',
+    icon: 'fa-globe ft-eb center-align',
     title: 'Country Information',
     onClick: showCountryInfo
   }]
@@ -263,19 +271,19 @@ function showCountryInfo() {
 }
 
 function showCountryInfoBox() {
-  // Show the country info popup without animation
-  $("#country_info").css({
-    opacity: "1",
-    top: "50px",
-    left: "280px"
-  });
-  $(".pull_country_info_popup").css({
-    left: "-40px"
-  });
+  // Show the country info modal
+  $("#country_info_modal").modal("show");
+
+    $("#country_info_modal .modal-dialog").addClass("modal-dialog-centered");
+    $("#country_info_modal .modal-dialog").css({
+      "top": "20px",
+      "left": "80px",
+      "margin": "0",
+    });
 }
 
 function hideCountryInfo() {
-  // Hide the country info popup without animation
+  // Hide the country info popup 
   $("#country_info").css({
     opacity: "0",
     top: "-500px"
@@ -285,7 +293,6 @@ function hideCountryInfo() {
   });
 }
 
-// Function to retrieve country information and display it
 async function get_country_info(country_code) {
   try {
     // Send a GET request to the server to retrieve country information
@@ -300,18 +307,14 @@ async function get_country_info(country_code) {
     // Parse the JSON response from the server
     const details = $.parseJSON(response);
 
-    // Update the country information on the page
+    // Update the country information in the modal
     lat = details.latlng[0];
     lng = details.latlng[1];
-    $("#country_name").html(details.name);
     $("#country_capital").html(details.capital);
     $("#country_population").html(numeral(details.population).format('0,0'));
     $("#country_flag").attr("src", details.flag);
     $("#country_currency").html(details.currencies[0]["name"]);
-    $("#country_wikipedia").attr(
-      "href",
-      "https://en.wikipedia.org/wiki/" + details.name
-    );
+    $("#country_wikipedia").attr("href", "https://en.wikipedia.org/wiki/" + details.name);
   } catch (error) {
     // Log any errors that occur while retrieving the country information
     console.error(error);
@@ -322,7 +325,7 @@ async function get_country_info(country_code) {
 const covidButton = L.easyButton({
   states: [{
     stateName: 'getCovidData',
-    icon: 'fa-virus-covid fa-2x center-align',
+    icon: 'fa-virus-covid ft-eb center-align',
     title: 'Get Covid data',
     onClick: get_covid_data
   }]
@@ -365,7 +368,7 @@ async function get_covid_data() {
 const weatherButton = L.easyButton({
   states: [{
     stateName: 'getWeatherData',
-    icon: 'fas fa-cloud-sun fa-2x center-align',
+    icon: 'fas fa-cloud-sun ft-eb center-align',
     title: 'Get weather data',
     onClick: get_weather_data
   }]
@@ -426,7 +429,7 @@ function get_weather_data() {
 const newsButton = L.easyButton({
   states: [{
     stateName: 'getNewsData',
-    icon: 'fas fa-newspaper fa-2x center-align',
+    icon: 'fas fa-newspaper ft-eb center-align',
     title: 'Get News',
     onClick: get_news_data
   }]
@@ -488,7 +491,7 @@ function get_news_card(data) {
 const holidayButton = L.easyButton({
   states: [{
     stateName: 'getnationalholidayData',
-    icon: 'fa fa-umbrella-beach fa-2x center-align',
+    icon: 'fa fa-umbrella-beach ft-eb center-align',
     title: 'Get national holiday data',
     onClick: get_nationalHolidays_data
   }]

@@ -60,47 +60,50 @@
               <option value="">Select Country</option>
             </select>
           </div>
-          <!-- Country Info -->
-          <div id="country_info">
-            <div class="card m-10">
-              <div class="card-header">
-                <i></i>
-                <h2 id="country_name"></h2>
-              </div>
-              <div class="card-body pb-10">
-                <table class="table table-bordered">
-                  <tr>
-                    <th>Capital</th>
-                    <td id="country_capital"></td>
-                  </tr>
-                  <tr>
-                    <th>Population</th>
-                    <td id="country_population"></td>
-                  </tr>
-                  <tr>
-                    <th>Flag</th>
-                    <td>
-                      <img src="" style="height: 50px" id="country_flag" />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Currency</th>
-                    <td id="country_currency"></td>
-                  </tr>
-                  <tr>
-                    <th>Wikipedia Page</th>
-                    <td>
-                      <a href="" target="_blank" class="text-dark" id="country_wikipedia">Click Here</a>
-                    </td>
-                  </tr>
-                </table>
-                <div class="text-center">
-                  <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                  </div>
+          <div class="modal fade" id="country_info_modal" tabindex="-1" role="dialog" aria-labelledby="country_info_modal_label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="country_info_modal_label">Country Information</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <table class="table table-bordered">
+                    <tr>
+                      <th>Capital</th>
+                      <td id="country_capital"></td>
+                    </tr>
+                    <tr>
+                      <th>Population</th>
+                      <td id="country_population"></td>
+                    </tr>
+                    <tr>
+                      <th>Flag</th>
+                      <td>
+                        <img src="" style="height: 50px" id="country_flag" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Currency</th>
+                      <td id="country_currency"></td>
+                    </tr>
+                    <tr>
+                      <th>Wikipedia Page</th>
+                      <td>
+                        <a href="" target="_blank" class="text-dark" id="country_wikipedia">Click Here</a>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
               </div>
             </div>
           </div>
+          
         <div id="map"></div>
       </div>
       <!-- Corona Data -->
