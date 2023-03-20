@@ -42,25 +42,23 @@ get_country_codes();
 // Fetching the user's location
 get_user_location();
 
-// Function to fetch the country codes from a PHP file and populate a select list
-function get_country_codes() {
-  $.ajax({
-    url: "php/getCountriesCode.php?",
-    type: "GET",
-    success: function (json) {
-      let countries = JSON.parse(json);
-      let option = "";
-      for (country of countries) {
-        option += '<option value="' + country.iso + '">' + country.name + "</option>";
-      }
-      $("#country_list").append(option).select2();
-      // Attach an event listener to the select element
-      $("#country_list").change(function() {
-        const country_code = $(this).val();
-        get_country_border(country_code);
-      });
-    },
-  });
+async function get_country_codes() {
+  try {
+    const response = await fetch("php/getCountriesCode.php");
+    const countries = await response.json();
+    let option = "";
+    for (const country of countries) {
+      option += `<option value="${country.iso}">${country.name}</option>`;
+    }
+    $("#country_list").append(option).select2();
+    // Attach an event listener to the select element
+    $("#country_list").change(function () {
+      const country_code = $(this).val();
+      get_country_border(country_code);
+    });
+  } catch (error) {
+    console.error("Error fetching country codes:", error);
+  }
 }
 
 async function get_user_location() {
@@ -389,56 +387,57 @@ const weatherButton = L.easyButton({
 
 weatherButton.addTo(map);
 
-function get_weather_data() {
+async function get_weather_data() {
   map.spin(true);
-  $.ajax({
-    url: "php/getWeatherInfo.php",
-    type: "GET",
-    data: {
-      lat: lat,
-      lng: lng
-    },
-    success: function (response) {
-      let details = $.parseJSON(response);
-      console.log(details);
-      $("#first_row").html("");
-      $("#second_row").html("");
-      $("#third_row").html("");
-      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      for (let i = 0; i < 5; i++) {
-        const d = details["daily"][i];
-        const day = days[new Date(d["dt"] * 1000).getDay()];
-        const maxTemp = parseInt(numeral(d["temp"]["max"]).format("0")).toLocaleString();
-        const minTemp = parseInt(numeral(d["temp"]["min"]).format("0")).toLocaleString();
-        $("#first_row").append("<td>" + day + "</td>");
-        $("#second_row").append("<td>" + maxTemp + "°</td>");
-        $("#third_row").append("<td>" + minTemp + "°</td>");
-      }
-      $("#weather_city_name").html(details.timezone);
-      let daily = details["daily"][0]["weather"][0];
-      $("#weather_description").html(
-        daily["main"] +
-        "<span>Wind " +
-        parseInt(details["daily"][0]["wind_speed"]) +
-        "km/h <span class='dot'>•</span> Precip " +
-        details["daily"][0]["clouds"] +
-        "%</span></h3>"
-      );
-      $("#weather_data img").attr(
-        "src",
-        "https://s3-us-west-2.amazonaws.com/s.cdpn.io/162656/" +
-        daily["icon"] +
-        ".svg"
-      );
-      $("#weather_data .image_parent h1").html(
-        parseInt(details["daily"][0]["temp"]["day"]) + "°"
-      );
-      map.spin(false);
-      $("#weatherModal").modal();
-    },
-  });
+  try {
+    const response = await $.ajax({
+      url: "php/getWeatherInfo.php",
+      type: "GET",
+      data: {
+        lat: lat,
+        lng: lng
+      },
+    });
+    let details = $.parseJSON(response);
+    console.log(details);
+    $("#first_row").html("");
+    $("#second_row").html("");
+    $("#third_row").html("");
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    for (let i = 0; i < 5; i++) {
+      const d = details["daily"][i];
+      const day = days[new Date(d["dt"] * 1000).getDay()];
+      const maxTemp = parseInt(numeral(d["temp"]["max"]).format("0")).toLocaleString();
+      const minTemp = parseInt(numeral(d["temp"]["min"]).format("0")).toLocaleString();
+      $("#first_row").append("<td>" + day + "</td>");
+      $("#second_row").append("<td>" + maxTemp + "°</td>");
+      $("#third_row").append("<td>" + minTemp + "°</td>");
+    }
+    $("#weather_city_name").html(details.timezone);
+    let daily = details["daily"][0]["weather"][0];
+    $("#weather_description").html(
+      daily["main"] +
+      "<span>Wind " +
+      parseInt(details["daily"][0]["wind_speed"]) +
+      "km/h <span class='dot'>•</span> Precip " +
+      details["daily"][0]["clouds"] +
+      "%</span></h3>"
+    );
+    $("#weather_data img").attr(
+      "src",
+      "https://s3-us-west-2.amazonaws.com/s.cdpn.io/162656/" +
+      daily["icon"] +
+      ".svg"
+    );
+    $("#weather_data .image_parent h1").html(
+      parseInt(details["daily"][0]["temp"]["day"]) + "°"
+    );
+    map.spin(false);
+    $("#weatherModal").modal();
+  } catch (error) {
+    console.error(error);
+  }
 }
-
 const newsButton = L.easyButton({
   states: [{
     stateName: 'getNewsData',
@@ -450,58 +449,62 @@ const newsButton = L.easyButton({
 
 newsButton.addTo(map);
 
-function get_news_data() {
+async function get_news_data() {
   var countryCode = $("#country_list").val();
   $("#news_data").html("");
   map.spin(true);
-  $.ajax({
-    url: "php/getNewsInfo.php",
-    data: {
-      countryCode: countryCode
-    },
-    method: "GET",
-    success: function (response) {
-      response = JSON.parse(response);
-      console.log(response);
-      if (response.articles && response.articles.length > 0) {
-        const data = response.articles;
-        for (let i = 0; i < data.length; i++) {
-          const newsCard = get_news_card(data[i]);
-          document.querySelector("#news_data").appendChild(newsCard);
-        }
-      } else {
-        $("#news_data").html("<p>No news found for this country.</p>");
+  try {
+    let response = await $.ajax({
+      url: "php/getNewsInfo.php",
+      data: {
+        countryCode: countryCode
+      },
+      method: "GET",
+    });
+    response = JSON.parse(response);
+    console.log(response);
+    if (response.articles && response.articles.length > 0) {
+      const data = response.articles;
+      for (let i = 0; i < data.length; i++) {
+        const newsCard = await get_news_card(data[i]);
+        document.querySelector("#news_data").appendChild(newsCard);
       }
-      map.spin(false);
-      $("#newsModal").modal();
-    },
-  });
+    } else {
+      $("#news_data").html("<p>No news found for this country.</p>");
+    }
+    map.spin(false);
+    $("#newsModal").modal();
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-function get_news_card(data) {
-  const template = document.getElementById('news-card-template');
-  const card = template.content.cloneNode(true);
+async function get_news_card(data) {
+  return new Promise((resolve, reject) => {
+    const template = document.getElementById('news-card-template');
+    const card = template.content.cloneNode(true);
 
-  card.querySelector('.card-title').textContent = data.author;
-  card.querySelector('.card-text').textContent = data.title;
+    card.querySelector('.card-title').textContent = data.author;
+    card.querySelector('.card-text').textContent = data.title;
 
-  if (data.urlToImage !== null) {
-    const img = document.createElement('img');
-    img.src = data.urlToImage;
-    img.alt = 'News Image';
-    img.classList.add('card-img-top');
-    card.querySelector('.card-image').appendChild(img);
-  } else {
-    card.querySelector('.card-image').textContent = 'Image not available';
-  }
+    if (data.urlToImage !== null) {
+      const img = document.createElement('img');
+      img.src = data.urlToImage;
+      img.alt = 'News Image';
+      img.classList.add('card-img-top');
+      card.querySelector('.card-image').appendChild(img);
+    } else {
+      card.querySelector('.card-image').textContent = 'Image not available';
+    }
 
-  if (data.description !== null) {
-    card.querySelector('.card-description').textContent = data.description;
-  }
+    if (data.description !== null) {
+      card.querySelector('.card-description').textContent = data.description;
+    }
 
-  card.querySelector('.btn-primary').href = data.url;
+    card.querySelector('.btn-primary').href = data.url;
 
-  return card;
+    resolve(card);
+  });
 }
 
 const holidayButton = L.easyButton({
@@ -520,25 +523,24 @@ function get_nationalHolidays_data() {
   nationalHolidays(countrycode);
 }
 
-function nationalHolidays(countrycode) {
-  $.ajax({
-    url: "php/getNationalHolidays.php",
-    type: 'GET',
-    dataType: 'json',
-    data: {
-      countrycode,
-    },
-    success: function(result) {
-      $('#nationalHoliday').html(result[0].localName);
-      $('#tableContainer').empty();
-      for (var i = 1; i < result.length; i++) {
-        const formattedDate = new Intl.DateTimeFormat('en-GB').format(new Date(result[i].date));
-        $('#tableContainer').append('<tr><td>' + result[i].localName + '</td><td>' + formattedDate + '</td></tr>');
-      }
-      $('#holidayModal').modal('show');
-    },
-    error: function(jqXHR, textStatus, errorThrown) {
-      console.log(errorThrown);
+async function nationalHolidays(countrycode) {
+  try {
+    const result = await $.ajax({
+      url: "php/getNationalHolidays.php",
+      type: 'GET',
+      dataType: 'json',
+      data: {
+        countrycode,
+      },
+    });
+    $('#nationalHoliday').html(result[0].localName);
+    $('#tableContainer').empty();
+    for (var i = 1; i < result.length; i++) {
+      const formattedDate = new Intl.DateTimeFormat('en-GB').format(new Date(result[i].date));
+      $('#tableContainer').append('<tr><td>' + result[i].localName + '</td><td>' + formattedDate + '</td></tr>');
     }
-  });
+    $('#holidayModal').modal('show');
+  } catch (error) {
+    console.log(error);
+  }
 }
