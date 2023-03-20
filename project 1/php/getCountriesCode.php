@@ -10,12 +10,10 @@ for($i=0;$i<sizeof($features);$i++){
     $country_name = $feature->properties->name;
     $country_iso_a2 = $feature->properties->iso_a2;
     $obj = (object)["name" => $country_name, "iso" => $country_iso_a2];
-    $array = [$country_name,$country_iso_a2];
-    array_push($all_countries, $array);
+    array_push($all_countries, $obj);
 }
 usort($all_countries, function($a, $b) {
-    return strcasecmp($a[0], $b[0]);
+    return strcasecmp($a->name, $b->name);
 });
-print_r(json_encode($all_countries));
-
+echo json_encode($all_countries);
 ?>

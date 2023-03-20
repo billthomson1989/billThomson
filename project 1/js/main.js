@@ -51,8 +51,7 @@ function get_country_codes() {
       let countries = JSON.parse(json);
       let option = "";
       for (country of countries) {
-        option +=
-          '<option value="' + country[1] + '">' + country[0] + "</option>";
+        option += '<option value="' + country.iso + '">' + country.name + "</option>";
       }
       $("#country_list").append(option).select2();
       // Attach an event listener to the select element
@@ -65,30 +64,41 @@ function get_country_codes() {
 }
 
 async function get_user_location() {
+  let defaultToFirstCountry = false;
+
   if (navigator.geolocation) {
-  try {
-  const position = await new Promise((resolve, reject) => {
-  navigator.geolocation.getCurrentPosition(resolve, reject);
-  });
-  const { latitude, longitude } = position.coords;
-  const coords = [latitude, longitude];
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+      const { latitude, longitude } = position.coords;
+      const coords = [latitude, longitude];
 
-  map.spin(true);
+      map.spin(true);
 
-  const response = await fetch(
-    `php/getCountryCodeFromLatLng.php?lat=${latitude}&lng=${longitude}&username=billthomson1989`
-  );
-  const json = await response.json();
+      const response = await fetch(
+        `php/getCountryCodeFromLatLng.php?lat=${latitude}&lng=${longitude}&username=billthomson1989`
+      );
+      const json = await response.json();
 
-  map.spin(false);
+      map.spin(false);
 
-  const country_code = json.countryCode;
-  $("#country_list").val(country_code).trigger("change");
-} catch (error) {
-  alert("Could not get your position!");
-}
+      const country_code = json.countryCode;
+      $("#country_list").val(country_code).trigger("change");
+      get_country_border(country_code);
+    } catch (error) {
+      defaultToFirstCountry = true;
+    }
+  } else {
+    defaultToFirstCountry = true;
+  }
 
-}
+  if (defaultToFirstCountry) {
+    const firstCountryOption = $("#country_list option:first");
+    const firstCountryCode = firstCountryOption.val();
+    firstCountryOption.prop("selected", true);
+    get_country_border(firstCountryCode);
+  }
 }
 
 let cities_cluster = null;
@@ -351,14 +361,14 @@ async function get_covid_data() {
       const numeralTotalCases = numeral(covidData.cases.total);
       const numeralActiveCases = numeral(covidData.cases.active);
 
-      $("#covid_total_cases").html(numeralTotalCases.format('0,0'));
-      $("#covid_active").html(numeralActiveCases.format('0,0'));
-      $("#covid_recovered").html(covidData.cases.recovered);
-      $("#covid_deaths").html(covidData.deaths.total);
-      $("#covid_todayCases").html(covidData.cases.new);
+      $("#covid_total_cases").html(numeralTotalCases.format('0,0').toLocaleString());
+      $("#covid_active").html(numeralActiveCases.format('0,0').toLocaleString());
+      $("#covid_recovered").html(parseInt(covidData.cases.recovered).toLocaleString());
+      $("#covid_deaths").html(parseInt(covidData.deaths.total).toLocaleString());
+      $("#covid_todayCases").html(parseInt(covidData.cases.new).toLocaleString());
     });
     
-    $("#coronoModal").modal();
+    $("#covidModal").modal("show");
   } catch (error) {
     console.log(error);
   } finally {
@@ -395,8 +405,8 @@ function get_weather_data() {
       for (let i = 0; i < 5; i++) {
         const d = details["daily"][i];
         const day = days[new Date(d["dt"] * 1000).getDay()];
-        const maxTemp = numeral(d["temp"]["max"]).format("0");
-        const minTemp = numeral(d["temp"]["min"]).format("0");
+        const maxTemp = parseInt(numeral(d["temp"]["max"]).format("0")).toLocaleString();
+        const minTemp = parseInt(numeral(d["temp"]["min"]).format("0")).toLocaleString();
         $("#first_row").append("<td>" + day + "</td>");
         $("#second_row").append("<td>" + maxTemp + "°</td>");
         $("#third_row").append("<td>" + minTemp + "°</td>");
@@ -516,8 +526,8 @@ function nationalHolidays(countrycode) {
       $('#nationalHoliday').html(result[0].localName);
       $('#tableContainer').empty();
       for (var i = 1; i < result.length; i++) {
-        $('#tableContainer')
-          .append('<tr><td>' + result[i].localName + '</td><td>' + result[i].date + '</td></tr>');
+        const formattedDate = new Intl.DateTimeFormat('en-GB').format(new Date(result[i].date));
+        $('#tableContainer').append('<tr><td>' + result[i].localName + '</td><td>' + formattedDate + '</td></tr>');
       }
       $('#holidayModal').modal('show');
     },
