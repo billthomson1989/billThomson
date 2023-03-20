@@ -84,7 +84,8 @@ async function get_user_location() {
       map.spin(false);
 
       const country_code = json.countryCode;
-      $("#country_list").val(country_code).trigger("change");
+      $("#country_list").val(country_code);
+      get_country_info(country_code); // Call get_country_info instead of triggering "change" event
       get_country_border(country_code);
     } catch (error) {
       defaultToFirstCountry = true;
