@@ -366,7 +366,9 @@ async function get_covid_data() {
       $("#covid_active").html(numeralActiveCases.format('0,0').toLocaleString());
       $("#covid_recovered").html(parseInt(covidData.cases.recovered).toLocaleString());
       $("#covid_deaths").html(parseInt(covidData.deaths.total).toLocaleString());
-      $("#covid_todayCases").html(parseInt(covidData.cases.new).toLocaleString());
+      // Check if covidData.cases.new is null and display '0' if it is, otherwise display the value
+      const newCases = covidData.cases.new === null ? '0' : parseInt(covidData.cases.new).toLocaleString();
+      $("#covid_todayCases").html(newCases);
     });
     
     $("#covidModal").modal("show");
