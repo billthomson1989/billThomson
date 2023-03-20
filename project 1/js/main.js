@@ -466,7 +466,8 @@ function get_news_data() {
       if (response.articles && response.articles.length > 0) {
         const data = response.articles;
         for (let i = 0; i < data.length; i++) {
-          $("#news_data").append(get_news_card(data[i]));
+          const newsCard = get_news_card(data[i]);
+          document.querySelector("#news_data").appendChild(newsCard);
         }
       } else {
         $("#news_data").html("<p>No news found for this country.</p>");
@@ -478,25 +479,27 @@ function get_news_data() {
 }
 
 function get_news_card(data) {
-  let card = '<div class="card" style="width: 20rem;"> <div class="card-body"> <h5 class="card-title">' +
-    data["author"] +
-    '</h5> <p class="card-text">' +
-    data["title"] +
-    '</p>';
+  const template = document.getElementById('news-card-template');
+  const card = template.content.cloneNode(true);
 
-  if (data["urlToImage"] !== null) {
-    card += '<img class="card-img-top" src="' + data["urlToImage"] + '" alt="News Image">';
+  card.querySelector('.card-title').textContent = data.author;
+  card.querySelector('.card-text').textContent = data.title;
+
+  if (data.urlToImage !== null) {
+    const img = document.createElement('img');
+    img.src = data.urlToImage;
+    img.alt = 'News Image';
+    img.classList.add('card-img-top');
+    card.querySelector('.card-image').appendChild(img);
   } else {
-    card += '<p>Image not available</p>';
-  }
-  
-  if (data["description"] !== null) {
-    card += '<p>' + data["description"] + '</p>';
+    card.querySelector('.card-image').textContent = 'Image not available';
   }
 
-  card += '<a href="' +
-    data["url"] +
-    '" target="_blank" class="btn btn-primary">Details</a> </div> </div>';
+  if (data.description !== null) {
+    card.querySelector('.card-description').textContent = data.description;
+  }
+
+  card.querySelector('.btn-primary').href = data.url;
 
   return card;
 }

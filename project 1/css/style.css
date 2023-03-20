@@ -109,6 +109,10 @@ body {
   justify-content: space-around;
 }
 
+.news-card {
+  width: 20rem;
+}
+
 /* Weather Card */
 .weather_card {
   margin: 0 auto;
