@@ -66,9 +66,7 @@ async function get_user_location() {
 
   if (navigator.geolocation) {
     try {
-      const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
+      const position = await getCurrentPosition();
       const { latitude, longitude } = position.coords;
       const coords = [latitude, longitude];
 
@@ -98,6 +96,12 @@ async function get_user_location() {
     firstCountryOption.prop("selected", true);
     get_country_border(firstCountryCode);
   }
+}
+
+function getCurrentPosition() {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
 }
 
 let cities_cluster = null;
@@ -147,47 +151,47 @@ async function get_country_border(country_code) {
   }
 }
 
-    async function get_nearby_cities(east, west, north, south) {
-      // Clear any existing layers in the cities feature group
-      cities_fg.clearLayers();
-      // Make an AJAX call to the server to retrieve the nearby cities
-      const response = await $.ajax({
-        url: "php/getNearByCities.php",
-        type: "GET",
-        data: {
-          east: east,
-          west: west,
-          north: north,
-          south: south,
-          username: "billthomson1989",
-        },
-      });
-      // Parse the JSON string to a JavaScript object
-      const data = JSON.parse(response).geonames;
-      // Create an icon for the city markers
-      const city_icon = L.ExtraMarkers.icon({
-        icon: "fa-city",
-        markerColor: "yellow",
-        shape: "circle",
-        prefix: "fa",
-      });
-      // Create a MarkerClusterGroup object for the city markers
-      const city_markers = L.markerClusterGroup();
-      // Loop through the city data and add markers to the marker cluster group
-      data.forEach((city) => {
-        const marker = L.marker([city.lat, city.lng], {
-          icon: city_icon,
-        }).bindPopup(
-          "<b>" +
-          city.name +
-          "</b><br>Population: " +
-          parseInt(city.population).toLocaleString("en")
-        );
-        city_markers.addLayer(marker);
-      });
-      // Add the marker cluster group to the cities feature group
-      cities_fg.addLayer(city_markers);
-    }
+async function get_nearby_cities(east, west, north, south) {
+  // Clear any existing layers in the cities feature group
+  cities_fg.clearLayers();
+  // Make an AJAX call to the server to retrieve the nearby cities
+  const response = await $.ajax({
+    url: "php/getNearByCities.php",
+    type: "GET",
+    data: {
+      east: east,
+      west: west,
+      north: north,
+      south: south,
+      username: "billthomson1989",
+    },
+  });
+  // Parse the JSON string to a JavaScript object
+  const data = JSON.parse(response).geonames;
+  // Create an icon for the city markers
+  const city_icon = L.ExtraMarkers.icon({
+    icon: "fa-city",
+    markerColor: "yellow",
+    shape: "circle",
+    prefix: "fa",
+  });
+  // Create a MarkerClusterGroup object for the city markers
+  const city_markers = L.markerClusterGroup();
+  // Loop through the city data and add markers to the marker cluster group
+  data.forEach((city) => {
+    const marker = L.marker([city.lat, city.lng], {
+      icon: city_icon,
+    }).bindPopup(
+      "<b>" +
+      city.name +
+      "</b><br>Population: " +
+      parseInt(city.population).toLocaleString("en")
+    );
+    city_markers.addLayer(marker);
+  });
+  // Add the marker cluster group to the cities feature group
+  cities_fg.addLayer(city_markers);
+}
 
     // Define wikipedia markers layer group outside the function
 const wikipedia_markers = L.markerClusterGroup();
@@ -324,11 +328,11 @@ async function get_country_info(country_code) {
     $("#country_flag").attr("src", details.flag);
     $("#country_currency").html(details.currencies[0]["name"]);
     $("#country_wikipedia").attr("href", "https://en.wikipedia.org/wiki/" + details.name);
-  } catch (error) {
-    // Log any errors that occur while retrieving the country information
-    console.error(error);
+    } catch (error) {
+// Log any errors that occur while retrieving the country information
+console.error(error);
+    }
   }
-}
 
 
 const covidButton = L.easyButton({
@@ -466,7 +470,7 @@ async function get_news_data() {
     if (response.articles && response.articles.length > 0) {
       const data = response.articles;
       for (let i = 0; i < data.length; i++) {
-        const newsCard = await get_news_card(data[i]);
+        const newsCard = get_news_card(data[i]);
         document.querySelector("#news_data").appendChild(newsCard);
       }
     } else {
@@ -479,32 +483,30 @@ async function get_news_data() {
   }
 }
 
-async function get_news_card(data) {
-  return new Promise((resolve, reject) => {
-    const template = document.getElementById('news-card-template');
-    const card = template.content.cloneNode(true);
+function get_news_card(data) {
+  const template = document.getElementById('news-card-template');
+  const card = template.content.cloneNode(true);
 
-    card.querySelector('.card-title').textContent = data.author;
-    card.querySelector('.card-text').textContent = data.title;
+  card.querySelector('.card-title').textContent = data.author;
+  card.querySelector('.card-text').textContent = data.title;
 
-    if (data.urlToImage !== null) {
-      const img = document.createElement('img');
-      img.src = data.urlToImage;
-      img.alt = 'News Image';
-      img.classList.add('card-img-top');
-      card.querySelector('.card-image').appendChild(img);
-    } else {
-      card.querySelector('.card-image').textContent = 'Image not available';
-    }
+  if (data.urlToImage !== null) {
+    const img = document.createElement('img');
+    img.src = data.urlToImage;
+    img.alt = 'News Image';
+    img.classList.add('card-img-top');
+    card.querySelector('.card-image').appendChild(img);
+  } else {
+    card.querySelector('.card-image').textContent = 'Image not available';
+  }
 
-    if (data.description !== null) {
-      card.querySelector('.card-description').textContent = data.description;
-    }
+  if (data.description !== null) {
+    card.querySelector('.card-description').textContent = data.description;
+  }
 
-    card.querySelector('.btn-primary').href = data.url;
+  card.querySelector('.btn-primary').href = data.url;
 
-    resolve(card);
-  });
+  return card;
 }
 
 const holidayButton = L.easyButton({
