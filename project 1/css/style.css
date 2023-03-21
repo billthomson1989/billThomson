@@ -214,28 +214,6 @@ td {
   vertical-align: top;
 }
 
-
-/* Table styles */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1rem;
-}
-
-th {
-  font-weight: bold;
-  text-align: left;
-}
-
-th,
-td {
-  padding: 0.75rem;
-  border: 1px solid #dee2e6;
-  vertical-align: top;
-}
-
-
-
 /* Modal styles */
 #holidayModal {
   background-color: rgba(0, 0, 0, 0.5);
