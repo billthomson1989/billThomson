@@ -15,6 +15,7 @@
 .text-warning {
   color: var(--primary-color);
   font-weight: bold;
+  text-align: center !important;
 }
 
 /* Layout */
@@ -24,8 +25,9 @@ body {
 }
 
 .modal-body {
-  height: 70vh;
   overflow-y: auto;
+  width: auto;
+  display: contents;
 }
 
 /* Map */
@@ -115,41 +117,38 @@ body {
 
 /* Weather Card */
 .weather_card {
-  margin: 0 auto;
-  padding: 5px 30px;
-  width: 350px;
+  padding: 5px 20px; /* Decrease horizontal padding */
+  width: auto;
   border-radius: 3px;
-  background-color: blue;
-  border: 1px solid lightgrey;
-  color: white;
+  background-color: white;
+  border: 10px solid lightgrey;
+  color: black;
 }
-
 
 .weather_card h1 {
   font-weight: 300;
   font-size: 5.59375em;
   line-height: .2em;
+  margin-bottom: -10px; /* Add negative margin to decrease white space */
 }
 
 .weather_card h2 {
   font-weight: 300;
   font-size: 2.25em;
-  margin: 0.83em 0;
+  margin: 0.33em 0; /* Decrease margin-top and margin-bottom */
+  text-align: center;
 }
 
 .weather_card h3 {
-  margin-right: 33px;
+  margin-right: 20px; /* Decrease margin-right */
   font-weight: 400;
   font-size: 1em;
+  background-color: #0380ec;
 }
 
 .weather_card span {
-  margin-left: 24px;
+  margin-left: 12px; /* Decrease margin-left */
   font-weight: 300;
-}
-
-.weather_card span span {
-  margin-left: 0;
 }
 
 .weather_card .dot {
@@ -161,38 +160,62 @@ body {
   top: 10px;
   width: 100%;
   text-align: center;
-  margin-bottom: 2.83em;
+  margin-bottom: 1em; /* Decrease margin-bottom */
+  background-color: #0380ec;
 }
 
 /* Apply padding-bottom to all cells in the first row */
 .weather_card tr:nth-child(1) td {
-  padding-bottom: 15px;
+  padding-bottom: 10px; /* Decrease padding-bottom */
 }
 
 /* Apply padding-bottom to all cells in the second and third rows */
 .weather_card tr:nth-child(2) td,
 .weather_card tr:nth-child(3) td {
-  padding-bottom: 7px;
+  padding-bottom: 5px; /* Decrease padding-bottom */
 }
 
-/* Apply font-size to all cells in the second and third rows */
-.weather_card tr:nth-child(2),
-.weather_card tr:nth-child(3) {
-  font-size: 0.9em;
-}
-
-.weather_card .image_parent{
+.image_parent{
   display: flex;
   align-items: center;
   justify-content: space-around;
-  margin: 2em 0;
+  margin: 1em 0; /* Decrease margin-top and margin-bottom */
+  background-color: #0380ec;
 }
 
 .weather_card .image_parent img{
   width:100px;
   height:auto;
-  background-color: white;
+  background-color: #0380ec;
   border-radius: 12px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 15px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-title {
+  flex-grow: 1;
+  text-align: center;
+  margin-bottom: 0;
+  font-size: 1.25rem;
+}
+
+.close {
+  margin-left: auto;
+  padding: 0;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  opacity: 0.8;
+}
+
+.close:focus {
+  outline: none;
 }
 
 /* Table styles */

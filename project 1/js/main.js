@@ -9,19 +9,18 @@ let lat;
 let lng;
 
 // Initializing the map and setting its view to [0, 0] with zoom level 1.5
-map = L.map("map", {
-  attributionControl: false,
-}).setView([0, 0], 1.5);
+map = L.map("map").setView([0, 0], 1.5);
 
-// Adding the scale control to the map
-L.control.scale().addTo(map);
-map.zoomControl.setPosition("topright");
+const CustomAttributionControl = L.Control.Attribution.extend({
+  options: {},
+  // You can override other methods or add new methods here as needed.
+});
 
-// Adding the OpenStreetMap tile layer to the map
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
     '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
+
 
 // Initializing the country boundary layer
 country_boundary = new L.geoJson().addTo(map);
@@ -50,11 +49,17 @@ async function get_country_codes() {
     for (const country of countries) {
       option += `<option value="${country.iso}">${country.name}</option>`;
     }
-    $("#country_list").append(option).select2();
+    $("#country_list").append(option).select2({
+      minimumResultsForSearch: Infinity, // Disables the search field
+      placeholder: $("#country_list").data("placeholder") // Sets the placeholder text
+    });
     // Attach an event listener to the select element
-    $("#country_list").change(function () {
+    $("#country_list").on("change", function (e, skipFunctions = false) {
       const country_code = $(this).val();
-      get_country_border(country_code);
+      if (!skipFunctions) {
+        get_country_info(country_code);
+        get_country_border(country_code);
+      }
     });
   } catch (error) {
     console.error("Error fetching country codes:", error);
@@ -80,8 +85,7 @@ async function get_user_location() {
       map.spin(false);
 
       const country_code = json.countryCode;
-      $("#country_list").val(country_code);
-      get_country_info(country_code); // Call get_country_info instead of triggering "change" event
+      $("#country_list").val(country_code).trigger("change", [true]); // Pass true as the second argument to the event handler
       get_country_border(country_code);
     } catch (error) {
       defaultToFirstCountry = true;
@@ -97,7 +101,6 @@ async function get_user_location() {
     get_country_border(firstCountryCode);
   }
 }
-
 function getCurrentPosition() {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(resolve, reject);
@@ -130,8 +133,8 @@ async function get_country_border(country_code) {
     }
 
     await Promise.all([
-      get_nearby_cities(east, west, north, south),
-      get_nearby_wikipedia(east, west, north, south),
+      get_nearby_cities(east, west, north, south, country_code),
+      get_nearby_wikipedia(east, west, north, south, country_code),
     ]);
     // Add marker cluster group to map
     if (cities_cluster) {
@@ -151,7 +154,30 @@ async function get_country_border(country_code) {
   }
 }
 
+const cityMarkers = L.layerGroup();
+
+const cityMarkerButton = L.easyButton({
+  states: [{
+    stateName: 'toggleCityMarkers',
+    icon: 'fas fa-city ft-eb center-align',
+    title: 'Toggle city markers',
+    onClick: function(btn, map) {
+      if (map.hasLayer(cityMarkers)) {
+        map.removeLayer(cityMarkers);
+        btn.state('hideCityMarkers');
+      } else {
+        map.addLayer(cityMarkers);
+        btn.state('showCityMarkers');
+      }
+    }
+  }]
+});
+
+cityMarkerButton.addTo(map);
+
 async function get_nearby_cities(east, west, north, south) {
+   // Show spinner
+   map.spin(true);
   // Clear any existing layers in the cities feature group
   cities_fg.clearLayers();
   // Make an AJAX call to the server to retrieve the nearby cities
@@ -190,51 +216,119 @@ async function get_nearby_cities(east, west, north, south) {
     city_markers.addLayer(marker);
   });
   // Add the marker cluster group to the cities feature group
-  cities_fg.addLayer(city_markers);
+  cityMarkers.addLayer(city_markers);
+  // Hide spinner
+  map.spin(false);
+}
+
+
+function preloadImages(urls, allImagesLoadedCallback){
+    var loadedCounter = 0;
+    var toBeLoadedNumber = urls.length;
+    urls.forEach(function(url){
+        preloadImage(url, function(){
+            loadedCounter++;
+            console.log('Number of loaded images: ' + loadedCounter);
+            if(loadedCounter == toBeLoadedNumber){
+                allImagesLoadedCallback();
+            }
+        });
+    });
+    function preloadImage(url, anImageLoadedCallback){
+        var img = new Image();
+        img.onload = anImageLoadedCallback;
+        img.src = url;
+    }
 }
 
     // Define wikipedia markers layer group outside the function
 const wikipedia_markers = L.markerClusterGroup();
 
+// Add a variable to track the visibility of the Wikipedia markers
+let wikipediaVisible = false;
 
-async function get_nearby_wikipedia(east, west, north, south) {
+// Create an EasyButton for the Wikipedia markers
+const wikipediaButton = L.easyButton({
+  states: [
+    {
+      stateName: 'showWikipediaMarkers',
+      icon: 'fab fa-wikipedia-w',
+      title: 'Show Wikipedia markers',
+      onClick: function (control) {
+        map.addLayer(wikipedia_markers);
+        wikipediaVisible = true;
+        control.state('hideWikipediaMarkers');
+      },
+    },
+    {
+      stateName: 'hideWikipediaMarkers',
+      icon: 'fab fa-wikipedia-w',
+      title: 'Hide Wikipedia markers',
+      onClick: function (control) {
+        map.removeLayer(wikipedia_markers);
+        wikipediaVisible = false;
+        control.state('showWikipediaMarkers');
+      },
+    },
+  ],
+});
+
+// Add the Wikipedia EasyButton to the map
+wikipediaButton.addTo(map);
+
+async function get_nearby_wikipedia(east, west, north, south, country_code) {
   try {
+    // Show spinner
+    map.spin(true);
     // Clear any existing Wikipedia markers from the map
     wikipedia_fg.clearLayers();
     wikipedia_markers.clearLayers();
 
     // Send an AJAX GET request to the specified PHP script
-    const response = await fetch(`php/getNearByWikipedia.php?east=${east}&west=${west}&north=${north}&south=${south}&username=billthomson1989`);
+    const response = await fetch(`php/getNearByWikipedia.php?east=${east}&west=${west}&north=${north}&south=${south}&username=billthomson1989&country_code=${country_code}`);
     const json = await response.json();
 
     // Get the array of Wikipedia articles from the data
     const data = json.geonames;
 
     // Create a custom icon for the Wikipedia markers
-    const wiki_icon = L.ExtraMarkers.icon({
-      icon: "fa-wikipedia-w", // Icon class
-      markerColor: "blue", // Color
-      shape: "square", // Shape
-      prefix: "fa", // Icon prefix
+    const wiki_icon = L.icon({
+      iconUrl: 'svgs/brands/wikipedia-w.svg',
+      iconSize: [25, 25],
+      iconAnchor: [12, 12],
+      popupAnchor: [0, -12],
     });
+
+    // Create an array to hold the URLs of all the wiki link images
+    const imageUrls = [];
 
     // Loop through each Wikipedia article in the data array
     data.forEach((item) => {
+      // Add the URL of the current article's image to the imageUrls array
+      imageUrls.push(item.thumbnailImg);
+
       // Create a marker for the current article
       const marker = L.marker([item.lat, item.lng], {
         icon: wiki_icon,
       }).bindPopup(
-        `<img src='${item.thumbnailImg}' width='100px' height='100px' alt='${item.title}'><br><b>${item.title}</b><br><a href='https://${item.wikipediaUrl}' target='_blank'>Wikipedia Link</a>`
+        `<img src='${item.thumbnailImg}' width='100px' height='100px' alt='${item.title}' onerror="this.onerror=null; this.src='css/images/WikiFront.png'"><br><b>${item.title}</b><br><a href='https://${item.wikipediaUrl}' target='_blank'>Wikipedia Link</a>`
       );
 
       // Add the marker to the Wikipedia markers layer group
       wikipedia_markers.addLayer(marker);
     });
 
-    // Add the Wikipedia markers cluster group to the map
-    map.addLayer(wikipedia_markers);
+    // Hide spinner
+    map.spin(false);
+
+    // Call the preloadImages function with the imageUrls array
+    preloadImages(imageUrls, function() {
+      console.log("All images were loaded");
+    });
 
   } catch (error) {
+    // Hide spinner in case of an error
+    map.spin(false);
     console.error(error);
   }
 }
@@ -289,9 +383,6 @@ function showCountryInfoBox() {
 
     $("#country_info_modal .modal-dialog").addClass("modal-dialog-centered");
     $("#country_info_modal .modal-dialog").css({
-      "top": "20px",
-      "left": "80px",
-      "margin": "0",
     });
 }
 
@@ -389,6 +480,21 @@ const weatherButton = L.easyButton({
   }]
 });
 
+async function getLocationInfo(lat, lng) {
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
+    );
+    const data = await response.json();
+    return {
+      city: data.address.city || data.address.town || data.address.village,
+      country: data.address.country
+    };
+  } catch (error) {
+    console.error("Error fetching location info:", error);
+  }
+}
+
 weatherButton.addTo(map);
 
 async function get_weather_data() {
@@ -404,6 +510,10 @@ async function get_weather_data() {
     });
     let details = $.parseJSON(response);
     console.log(details);
+
+     // Fetch country name
+     const locationInfo = await getLocationInfo(lat, lng);
+     
     $("#first_row").html("");
     $("#second_row").html("");
     $("#third_row").html("");
@@ -417,7 +527,10 @@ async function get_weather_data() {
       $("#second_row").append("<td>" + maxTemp + "°</td>");
       $("#third_row").append("<td>" + minTemp + "°</td>");
     }
-    $("#weather_city_name").html(details.timezone);
+    // Update weather data display
+    // Replace 'details.timezone' with 'getLocationInfo' below
+    $("#weather_city_name").html(`${locationInfo.city}, ${locationInfo.country}`);
+
     let daily = details["daily"][0]["weather"][0];
     $("#weather_description").html(
       daily["main"] +
@@ -546,3 +659,27 @@ async function nationalHolidays(countrycode) {
     console.log(error);
   }
 }
+
+// Add the tile layers for streets and satellite views
+const streets = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution:
+    '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+});
+
+const satellite = L.tileLayer(
+  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  {
+    attribution:
+      "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+  }
+);
+
+// Add these layers to the map and set the streets as the default layer
+const baseLayers = {
+  Streets: streets,
+  Satellite: satellite,
+};
+
+L.control.layers(baseLayers).addTo(map);
+streets.addTo(map);
+
