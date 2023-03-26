@@ -1,10 +1,13 @@
 <?php
 
+// Include the configuration file
+require_once 'config.php';
+
 $east = $_GET['east'];
 $west = $_GET['west'];
 $north = $_GET['north'];
 $south = $_GET['south'];
-$username = $_GET['username'];
+$username = $config['username'];
 
 // API endpoint
 $url = "http://api.geonames.org/wikipediaBoundingBoxJSON?north=$north&south=$south&east=$east&west=$west&username=$username";
@@ -28,3 +31,4 @@ curl_close($ch);
 echo $response;
 
 ?>
+

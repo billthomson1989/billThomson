@@ -294,3 +294,18 @@ color: rgb(171, 45, 255);
 padding: 2px !important;
 font-size: 22px;
 }
+
+.leaflet-control-zoom {
+  bottom: -650px !important;
+  left: auto;
+}
+
+.leaflet-right .leaflet-control {
+  margin-right: 10px !important;
+  bottom: 0px !important;
+}
+
+.leaflet-top .leaflet-control {
+  margin-top: 10px;
+  bottom: 80px;
+}

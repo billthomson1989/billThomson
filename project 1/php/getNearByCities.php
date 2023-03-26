@@ -1,11 +1,13 @@
 <?php
 
-// Retrieve the bounding coordinates from the query string
-$north = $_GET['north'];
-$south = $_GET['south'];
+// Include the configuration file
+require_once 'config.php';
+
 $east = $_GET['east'];
 $west = $_GET['west'];
-$username = $_GET['username'];
+$north = $_GET['north'];
+$south = $_GET['south'];
+$username = $config['username'];
 
 // Construct the API URL using the bounding coordinates and the username
 $url = "http://api.geonames.org/citiesJSON?north=$north&south=$south&east=$east&west=$west&username=$username";

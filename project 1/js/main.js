@@ -49,12 +49,22 @@ async function get_country_codes() {
     for (const country of countries) {
       option += `<option value="${country.iso}">${country.name}</option>`;
     }
-    $("#country_list").append(option).select2({
-      minimumResultsForSearch: Infinity, // Disables the search field
-      placeholder: $("#country_list").data("placeholder") // Sets the placeholder text
+    const $select = $("#country_list");
+    $select.append(option).on('keydown', function (e) {
+      // If a letter key is pressed, scroll to the first matching country
+      if (e.which >= 65 && e.which <= 90) {
+        const key = String.fromCharCode(e.which).toLowerCase();
+        const $options = $select.find('option');
+        const index = $options.filter(function () {
+          return $(this).text().toLowerCase().indexOf(key) === 0;
+        }).first().index();
+        if (index >= 0) {
+          $select[0].selectedIndex = index;
+        }
+      }
     });
     // Attach an event listener to the select element
-    $("#country_list").on("change", function (e, skipFunctions = false) {
+    $select.on("change", function (e, skipFunctions = false) {
       const country_code = $(this).val();
       if (!skipFunctions) {
         get_country_info(country_code);
@@ -78,7 +88,7 @@ async function get_user_location() {
       map.spin(true);
 
       const response = await fetch(
-        `php/getCountryCodeFromLatLng.php?lat=${latitude}&lng=${longitude}&username=billthomson1989`
+        `php/getCountryCodeFromLatLng.php?lat=${latitude}&lng=${longitude}`
       );
       const json = await response.json();
 
@@ -175,52 +185,60 @@ const cityMarkerButton = L.easyButton({
 
 cityMarkerButton.addTo(map);
 
-async function get_nearby_cities(east, west, north, south) {
-   // Show spinner
-   map.spin(true);
-  // Clear any existing layers in the cities feature group
-  cities_fg.clearLayers();
-  // Make an AJAX call to the server to retrieve the nearby cities
-  const response = await $.ajax({
-    url: "php/getNearByCities.php",
-    type: "GET",
-    data: {
-      east: east,
-      west: west,
-      north: north,
-      south: south,
-      username: "billthomson1989",
-    },
-  });
-  // Parse the JSON string to a JavaScript object
-  const data = JSON.parse(response).geonames;
-  // Create an icon for the city markers
-  const city_icon = L.ExtraMarkers.icon({
-    icon: "fa-city",
-    markerColor: "yellow",
-    shape: "circle",
-    prefix: "fa",
-  });
-  // Create a MarkerClusterGroup object for the city markers
-  const city_markers = L.markerClusterGroup();
-  // Loop through the city data and add markers to the marker cluster group
-  data.forEach((city) => {
-    const marker = L.marker([city.lat, city.lng], {
-      icon: city_icon,
-    }).bindPopup(
-      "<b>" +
-      city.name +
-      "</b><br>Population: " +
-      parseInt(city.population).toLocaleString("en")
-    );
-    city_markers.addLayer(marker);
-  });
-  // Add the marker cluster group to the cities feature group
-  cityMarkers.addLayer(city_markers);
-  // Hide spinner
-  map.spin(false);
+async function get_nearby_cities(east, west, north, south, country_code) {
+  try {
+    // Show spinner
+    map.spin(true);
+    // Clear any existing layers in the cities feature group
+    cities_fg.clearLayers();
+    // Make an AJAX call to the server to retrieve the nearby cities
+    const response = await $.ajax({
+      url: "php/getNearByCities.php",
+      type: "GET",
+      data: {
+        east: east,
+        west: west,
+        north: north,
+        south: south,
+        username: "username",
+        country_code: country_code // add country code parameter to the AJAX call
+      },
+    });
+    // Parse the JSON string to a JavaScript object
+    const data = JSON.parse(response).geonames;
+    // Filter the city data based on the country code
+    const filteredData = data.filter(city => city.countrycode === country_code);
+    // Create an icon for the city markers
+    const city_icon = L.ExtraMarkers.icon({
+      icon: "fa-city",
+      markerColor: "yellow",
+      shape: "circle",
+      prefix: "fa",
+    });
+    // Create a MarkerClusterGroup object for the city markers
+    const city_markers = L.markerClusterGroup();
+    // Loop through the filtered city data and add markers to the marker cluster group
+    filteredData.forEach((city) => {
+      const marker = L.marker([city.lat, city.lng], {
+        icon: city_icon,
+      }).bindPopup(
+        "<b>" +
+        city.name +
+        "</b><br>Population: " +
+        parseInt(city.population).toLocaleString("en")
+      );
+      city_markers.addLayer(marker);
+    });
+    // Add the marker cluster group to the cityMarkers layer group
+    cityMarkers.clearLayers().addLayer(city_markers);
+    // Hide spinner
+    map.spin(false);
+  } catch (error) {
+    // Hide spinner in case of an error
+    map.spin(false);
+    console.error(error);
+  }
 }
-
 
 function preloadImages(urls, allImagesLoadedCallback){
     var loadedCounter = 0;
@@ -285,11 +303,14 @@ async function get_nearby_wikipedia(east, west, north, south, country_code) {
     wikipedia_markers.clearLayers();
 
     // Send an AJAX GET request to the specified PHP script
-    const response = await fetch(`php/getNearByWikipedia.php?east=${east}&west=${west}&north=${north}&south=${south}&username=billthomson1989&country_code=${country_code}`);
+    const response = await fetch(`php/getNearByWikipedia.php?east=${east}&west=${west}&north=${north}&south=${south}&country_code=${country_code}`);
     const json = await response.json();
 
     // Get the array of Wikipedia articles from the data
     const data = json.geonames;
+
+    // Filter the data to only include articles from the selected country
+    const filteredData = data.filter(item => item.countryCode === country_code);
 
     // Create a custom icon for the Wikipedia markers
     const wiki_icon = L.icon({
@@ -302,8 +323,8 @@ async function get_nearby_wikipedia(east, west, north, south, country_code) {
     // Create an array to hold the URLs of all the wiki link images
     const imageUrls = [];
 
-    // Loop through each Wikipedia article in the data array
-    data.forEach((item) => {
+    // Loop through each Wikipedia article in the filtered data array
+    filteredData.forEach((item) => {
       // Add the URL of the current article's image to the imageUrls array
       imageUrls.push(item.thumbnailImg);
 
