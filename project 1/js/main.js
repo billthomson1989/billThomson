@@ -313,11 +313,11 @@ async function get_nearby_wikipedia(east, west, north, south, country_code) {
     const filteredData = data.filter(item => item.countryCode === country_code);
 
     // Create a custom icon for the Wikipedia markers
-    const wiki_icon = L.icon({
-      iconUrl: 'svgs/brands/wikipedia-w.svg',
-      iconSize: [25, 25],
-      iconAnchor: [12, 12],
-      popupAnchor: [0, -12],
+    const wiki_icon = L.ExtraMarkers.icon({
+      icon: "fa-wikipedia-w",
+      markerColor: "blue",
+      shape: "square",
+      prefix: "fab"
     });
 
     // Create an array to hold the URLs of all the wiki link images
@@ -358,7 +358,7 @@ function polystyle() {
   return {
     fillColor: "blue",
     weight: 1,
-    opacity: 0.1,
+    opacity: 0.5,
     color: "red", //Outline color
     fillOpacity: 0.1,
   };
@@ -440,11 +440,19 @@ async function get_country_info(country_code) {
     $("#country_flag").attr("src", details.flag);
     $("#country_currency").html(details.currencies[0]["name"]);
     $("#country_wikipedia").attr("href", "https://en.wikipedia.org/wiki/" + details.name);
-    } catch (error) {
+    // Add a map spin while the country information is being loaded
+map.spin(true);
+
+// Wait for the map to finish spinning before showing the country info modal
+setTimeout(function () {
+  map.spin(false);
+}, 2000);
+
+} catch (error) {
 // Log any errors that occur while retrieving the country information
 console.error(error);
-    }
-  }
+}
+}
 
 
 const covidButton = L.easyButton({
@@ -521,6 +529,11 @@ weatherButton.addTo(map);
 async function get_weather_data() {
   map.spin(true);
   try {
+    // Get the current location of the map center
+    const center = map.getCenter();
+    const lat = center.lat.toFixed(4);
+    const lng = center.lng.toFixed(4);
+
     const response = await $.ajax({
       url: "php/getWeatherInfo.php",
       type: "GET",
@@ -532,24 +545,26 @@ async function get_weather_data() {
     let details = $.parseJSON(response);
     console.log(details);
 
-     // Fetch country name
-     const locationInfo = await getLocationInfo(lat, lng);
-     
+    // Fetch country and city name
+    const locationInfo = await getLocationInfo(lat, lng);
+
     $("#first_row").html("");
     $("#second_row").html("");
     $("#third_row").html("");
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     for (let i = 0; i < 5; i++) {
       const d = details["daily"][i];
-      const day = days[new Date(d["dt"] * 1000).getDay()];
+      const date = new Date(d["dt"] * 1000);
+      const formattedDate = date.toLocaleDateString("en-GB", {
+        month: "short",
+        day: "numeric",
+      });
       const maxTemp = parseInt(numeral(d["temp"]["max"]).format("0")).toLocaleString();
       const minTemp = parseInt(numeral(d["temp"]["min"]).format("0")).toLocaleString();
-      $("#first_row").append("<td>" + day + "</td>");
+      $("#first_row").append("<td>" + formattedDate + "</td>");
       $("#second_row").append("<td>" + maxTemp + "°</td>");
       $("#third_row").append("<td>" + minTemp + "°</td>");
     }
     // Update weather data display
-    // Replace 'details.timezone' with 'getLocationInfo' below
     $("#weather_city_name").html(`${locationInfo.city}, ${locationInfo.country}`);
 
     let daily = details["daily"][0]["weather"][0];
@@ -681,6 +696,12 @@ async function nationalHolidays(countrycode) {
   }
 }
 
+// Define the Wikipedia layer group
+const wikipediaLayer = L.layerGroup([wikipedia_markers]);
+
+// Define the city markers layer group
+const cityLayer = L.layerGroup([cityMarkers]);
+
 // Add the tile layers for streets and satellite views
 const streets = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
@@ -701,6 +722,9 @@ const baseLayers = {
   Satellite: satellite,
 };
 
-L.control.layers(baseLayers).addTo(map);
+L.control.layers(baseLayers, { 'Wikipedia Markers': wikipediaLayer, 'City Markers': cityLayer }).addTo(map);
 streets.addTo(map);
 
+// Add the city markers and Wikipedia markers to the map by default
+map.addLayer(cityLayer);
+map.addLayer(wikipediaLayer);
