@@ -237,6 +237,12 @@ td {
   vertical-align: top;
 }
 
+table.table-bordered>tbody>tr>th,
+table.table-bordered>tbody>tr>td {
+  border: 1px solid #dee2e6;
+  text-align: center;
+}
+
 /* Modal styles */
 #holidayModal {
   background-color: rgba(0, 0, 0, 0.5);
