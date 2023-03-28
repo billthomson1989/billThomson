@@ -8,6 +8,14 @@ let country_name;
 let lat;
 let lng;
 
+$(window).on('load', function () {
+  if ($('#preloader').length) {
+  $('#preloader').delay(1000).fadeOut('slow', function () {
+  $(this).remove();
+  });
+  }
+  });
+
 // Initializing the map and setting its view to [0, 0] with zoom level 1.5
 map = L.map("map").setView([0, 0], 1.5);
 
@@ -442,13 +450,7 @@ async function get_country_info(country_code) {
     $("#country_flag").attr("src", details.flag);
     $("#country_currency").html(details.currencies[0]["name"]);
     $("#country_wikipedia").attr("href", "https://en.wikipedia.org/wiki/" + details.name);
-    // Add a map spin while the country information is being loaded
-map.spin(true);
-
-// Wait for the map to finish spinning before showing the country info modal
-setTimeout(function () {
-  map.spin(false);
-}, 2000);
+    
 
 } catch (error) {
 // Log any errors that occur while retrieving the country information
