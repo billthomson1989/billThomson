@@ -175,7 +175,6 @@ body {
   margin-right: 20px; /* Decrease margin-right */
   font-weight: 400;
   font-size: 1em;
-  background-color: #0380ec;
 }
 
 .weather_card span {
@@ -193,7 +192,6 @@ body {
   width: 100%;
   text-align: center;
   margin-bottom: 1em; /* Decrease margin-bottom */
-  background-color: #0380ec;
 }
 
 /* Apply padding-bottom to all cells in the first row */
@@ -212,13 +210,11 @@ body {
   align-items: center;
   justify-content: space-around;
   margin: 1em 0; /* Decrease margin-top and margin-bottom */
-  background-color: #0380ec;
 }
 
 .weather_card .image_parent img{
   width:100px;
   height:auto;
-  background-color: #0380ec;
   border-radius: 12px;
 }
 

@@ -183,7 +183,7 @@ const cityMarkerButton = L.easyButton({
   }]
 });
 
-cityMarkerButton.addTo(map);
+//cityMarkerButton.addTo(map);
 
 async function get_nearby_cities(east, west, north, south, country_code) {
   try {
@@ -292,7 +292,7 @@ const wikipediaButton = L.easyButton({
 });
 
 // Add the Wikipedia EasyButton to the map
-wikipediaButton.addTo(map);
+//wikipediaButton.addTo(map);
 
 async function get_nearby_wikipedia(east, west, north, south, country_code) {
   try {
@@ -515,9 +515,16 @@ async function getLocationInfo(lat, lng) {
       `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
     );
     const data = await response.json();
+    const countryCode = data.address.country_code.toUpperCase();
+    const countryName = data.address.country;
+    const capitalResponse = await fetch(
+      `https://restcountries.com/v3.1/alpha/${countryCode}`
+    );
+    const capitalData = await capitalResponse.json();
+    const capital = capitalData[0].capital[0];
     return {
-      city: data.address.city || data.address.town || data.address.village,
-      country: data.address.country
+      city: capital,
+      country: countryName
     };
   } catch (error) {
     console.error("Error fetching location info:", error);
