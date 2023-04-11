@@ -1,0 +1,421 @@
+
+#title {    
+    font-family: 'Monaco', 'Monospace';
+    text-align: center;
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
+#functionRow {
+    margin: 1.5%;
+}
+
+.buttonRow {
+    margin: auto;
+    text-align: center;
+}
+
+.buttonRow .btn {
+    margin-right: 2px;
+    margin-left: -20px;
+    margin-bottom: -5px; 
+}
+
+.btn-primary {
+    width: 451px!important;
+    padding: none;
+    color: #fff;
+    background-color: silver!important;
+    border-color: gray!important;
+}
+
+.btn-secondary {
+    padding: none;
+    color: #fff;
+    background-color: silver!important;
+    border-color: gray!important;
+    white-space: nowrap;
+}
+
+.btn {
+    white-space: nowrap;
+}
+
+.searchBar {
+    margin: auto;
+    text-align: center;
+}
+
+.custom-button {
+    padding: 3px 0px;
+    width: 25px!important;
+    height: 25px!important;
+}
+.personnel-tab {
+    background-color: aqua!important;
+    text-shadow: cadetblue!important;
+}
+.btn-info {
+    border:none;
+}
+.department-tab {
+    background-color: rgb(255, 230, 0)!important;
+    text-shadow: cadetblue!important;
+}
+.location-tab {
+    background-color: rgb(30, 255, 0)!important;
+    text-shadow: cadetblue!important;
+}
+
+@media only screen and (max-width: 450px) {
+    .webview{
+        display: none;
+    }
+    .tab-custom {
+        font-size:3.5vw;
+    }
+}
+
+@media not screen and (max-width: 450px) {
+    .mobileview{
+        display: none;
+    }
+}
+
+.tab-width-20 {
+    width: 20%;
+}
+
+.search-field {
+    max-width: 250px!important;
+    padding-top: 0.3125rem;
+    padding-bottom: 0.3125rem;
+    margin-right: 15rem;
+    
+}
+
+.custom-search-button {
+    margin-left: 16px; 
+    border: 2px solid #000; 
+    display: inline-block;
+    padding: 2px 4px; 
+    border-radius: 5px; 
+    color: #198754;
+    border-color: #198754;
+    font-size: 1.25rem;
+}
+
+#home {
+    margin-left: 200px;
+    border: 2px solid #000;
+    display: inline-block;
+    padding: 2px 4px;
+    border-radius: 5px;
+    color: #198754;
+    border-color: #198754;
+    font-size: 1.25rem;
+}
+
+.custom-home-button:hover {
+    color: #fff!important;
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.bg-light {
+    background-color: white!important;
+  }
+
+.table {
+padding: 0.5rem 2.5rem!important;
+}
+
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #f3f3f3;
+    z-index: 99;
+}
+.scroll-table {
+    overflow: scroll;
+    height: 76vh;    
+    border: 2px solid black;
+    margin-left: 14px;
+    margin-right: 14px;
+    width: 96%;
+    max-width: 96%
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+.button-custom {
+    text-align: center!important;
+}
+.delete-message {
+    margin:13px; 
+}
+.form-custom {
+    margin-bottom: 10px!important;
+}
+
+.custom-select {
+    display: inline-block;
+    width: 100%;
+    height: calc(2.25rem + 2px);
+    padding: .375rem 1.75rem .375rem .75rem;
+    line-height: 1.5;
+    color: #495057;
+    vertical-align: middle;
+    background: #fff url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right .75rem center;
+      background-color: rgb(255, 255, 255);
+      background-size: auto;
+    background-size: 8px 10px;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  .input-group-append, .input-group-prepend {
+    display: -ms-flexbox;
+    display: flex;
+  }
+
+.tableFixHead {
+    overflow-y: auto;
+    height: 500px;
+    background-color: whitesmoke;
+}
+.tableFixHead thead th {
+    position: sticky;
+    top: 0;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+th,
+td {
+    padding: 8px 16px;
+    /*border: 1px solid #ccc; */
+}
+th {
+    background: gray;
+    color: white;
+}
+
+td, th {
+    border-style: solid;
+    /*border-width: 1px !important; */
+}
+
+.tableRow:hover {
+    cursor: pointer;
+    background-color: antiquewhite !important;
+}
+
+.tableIcon{
+    text-align: center;
+}
+
+#resetBtn{
+    visibility: hidden;
+    cursor: pointer;
+}
+
+.rowButtons {
+    width: 25%;
+    text-align: center;
+}
+
+.formLocation{
+    background-color: whitesmoke !important;
+}
+
+.submitBtn{
+    margin: auto !important;
+}
+
+.tableHolder {
+    width: 90%;
+    margin: auto;
+    margin-bottom: 2.5%;
+    border-style: double;
+    border-color: black;
+}
+
+.searchForm{
+    width: 80%;
+    margin: auto;
+}
+
+#justifySearch {
+    display: flex;
+    justify-content: right;
+    width: 950px;
+  }
+
+#searchSelect{
+    background-color: whitesmoke;
+}
+
+#search:hover{
+    cursor: pointer;
+}
+
+.reset{
+    padding-top: 0.4%
+}
+
+.btnAllign{
+    display: inherit;
+}
+
+.cancelBtn{
+    margin-right: 5%;
+}
+
+.userInfo {
+    background-color: whitesmoke !important;
+}
+
+.delete {
+    text-align: center;
+    color: red;
+}
+
+.tableFixHeadModals {
+    overflow-y: auto;
+    height: 100%;
+    background-color: whitesmoke;
+}
+.tableFixHeadModals thead th {
+    position: sticky;
+    top: 0;
+}
+
+.tableHead{
+    background-color: gray;
+    color: white;
+}
+
+.depTableRow:hover, .locTableRow:hover {
+    cursor: pointer;
+    background-color: antiquewhite !important;
+}
+
+.deleteBtn {
+    margin: auto;
+    text-align: center;
+}
+
+.modalIcon{
+    width: 75%;
+}
+
+#add_user_location{
+    margin-bottom: 0;
+}
+
+@media only screen and (max-width: 1250px) {
+
+    html {
+        font-size: 0.75em;
+    }
+
+    .tableHolder {
+        width: 95%;
+    }
+
+    td {
+        padding: 4px 8px;
+        border: 0.5px solid #ccc;
+    }
+
+    th {
+        padding: 0px;
+        text-align: center !important;
+    }
+
+}
+
+@media only screen and (max-width: 1025px) {
+
+    html {
+        font-size: 0.65em;
+    }
+
+    .tableHolder {
+        width: 98%;
+    }
+
+    td {
+        padding: 2px 4px;
+        border: 0.5px solid #ccc;
+    }
+
+    .tableIcon {
+        display: none;
+    }
+
+    th {
+        padding: 0px;
+        text-align: center !important;
+    }
+
+}
+
+@media only screen and (max-width: 750px) {
+    .input-group{
+        display: block !important;
+    }
+
+    #searchSelect {
+        width: 100% !important;
+    }
+
+    #searchField {
+        width: 100% !important;
+    }
+
+    #search{
+        width: 50%;
+        margin: auto !important;
+        margin-top: 2% !important;
+        justify-content: center;
+    }
+    
+    #searchBar{
+        margin: 2.5% !important;
+    }
+
+    .reset{
+        padding-top: 6%;
+    }
+
+    .modalIcon {
+        display:none;
+    }
+}
+
+@media only screen and (max-width: 650px) {
+    .hider1 {
+        display:none;
+    }
+}
+
+@media only screen and (max-width: 375px) {
+    .hider2 {
+        display:none;
+    }
+    .reset{
+        padding-top: 10%;
+    }
+}
