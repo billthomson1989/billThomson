@@ -392,36 +392,42 @@ $('.tableRow').click(function() {
 
     // --------------------------------------------------------- Locations ---------------------------------------------------------
 
-    // Location Modal Behaviour
-    $(`#locations`).on('click', event => {
+    // Function to update the locations list
+function updateLocationsList() {
+    $.ajax({
+        type: 'GET',
+        url: "../companydirectory/libs/php/getLocations.php",
+        data: {},
+        dataType: 'json',
+        async: false,
+        success: function(results) {
+            let data = results["data"];
+            let locArray = [];
+            let loc_html = ``;
 
-        // Generate the html table with locations list 
-        $.ajax({
-            type: 'GET',
-            url: "../companydirectory/libs/php/getLocations.php",
-            data: {},
-            dataType: 'json',
-            async: false,
-            success: function(results) {
-                let data = results["data"];
-                let locArray = [];
-                let loc_html = ``;
-
-                for(let i=0; i < data.length; i++){
-                    locArray.push(data[i]);
-                }
-
-                for(let i=0; i < locArray.length; i++){
-                    loc_html += `<tr id="${locArray[i].id}" class=" locationEdit locTableRow" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#locationEditModal" locationName="${locArray[i].location}" locationID="${locArray[i].id}" departments="${locArray[i].departments}"><td scope="row" class="locationHeader">${locArray[i].location}</td></tr>`;
-                }
-
-                $('#locationsList').html(loc_html);
-            },
-
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.log(errorThrown);
+            for(let i=0; i < data.length; i++){
+                locArray.push(data[i]);
             }
-        })   
+
+            for(let i=0; i < locArray.length; i++){
+                loc_html += `<tr id="${locArray[i].id}" class=" locationEdit locTableRow" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#locationEditModal" locationName="${locArray[i].location}" locationID="${locArray[i].id}" departments="${locArray[i].departments}"><td scope="row" class="locationHeader">${locArray[i].location}</td></tr>`;
+            }
+
+            $('#locationsList').html(loc_html);
+        },
+
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    });
+}
+
+// Location Modal Behaviour
+$(`#locations`).on('click', event => {
+
+    // Initially update the locations list when the modal is opened
+    updateLocationsList();
+
 
 
         // Edit Location Modal
@@ -489,14 +495,14 @@ $('.tableRow').click(function() {
             dataType: 'json',
             async: false,
             success: function(results) {
-                location.reload();
+                updateLocationsList();
             },
     
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log(errorThrown);
             }
-        }) 
-    })
+        });
+    });
 
     // Add Location - Modal
     $("#addLocation").click(function(){
@@ -504,30 +510,34 @@ $('.tableRow').click(function() {
         $('#newLocName').val("");
     })
 
-    // Add Location -> PHP Routine
-    $("#addLocForm").submit(function(e) {
+   // Add Location -> PHP Routine
+$("#addLocForm").submit(function(e) {
 
-        e.preventDefault();
-        e.stopPropagation();
+    e.preventDefault();
+    e.stopPropagation();
 
-        $.ajax({
-            type: 'POST',
-            url: "../companydirectory/libs/php/insertLocation.php",
-            data: {
-                name: $('#newLocName').val(),
-            },
-            dataType: 'json',
-            async: false,
-            success: function(results) {
-                location.reload();
-            },
-    
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.log(errorThrown);
-            }
-        })
+    $.ajax({
+        type: 'POST',
+        url: "../companydirectory/libs/php/insertLocation.php",
+        data: {
+            name: $('#newLocName').val(),
+        },
+        dataType: 'json',
+        async: false,
+        success: function(results) {
+            updateLocationsList();
+            // Hide the modal and remove the backdrop
+            $('#addLocationModal').modal('hide');
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
+        },
 
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
     })
+
+})
 
 
     // --------------------------------------------------------- Search Functions ---------------------------------------------------------
@@ -585,8 +595,6 @@ $('.tableRow').click(function() {
           $('#searchBar').addClass('col-10');
         }
       });
-
-});
 
 function generateSearchResultsUsers(results){
     let searchData = results["data"];
@@ -717,4 +725,4 @@ function getAllUsers(){
             console.log(errorThrown);
         }
     })
-};
+}});
