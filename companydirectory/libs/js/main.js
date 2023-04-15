@@ -248,8 +248,42 @@ $('.tableRow').click(function() {
 
     // --------------------------------------------------------- Departments ---------------------------------------------------------
 
+    // Function to update the department list
+        function updateDepartmentList() {
+        $.ajax({
+        type: 'GET',
+        url: "../companydirectory/libs/php/getAllDepartments.php", // Replace this with the appropriate API URL for fetching department data
+        data: {},
+        dataType: 'json',
+        async: false,
+        success: function(results) {
+            let data = results["data"];
+            let depArray = [];
+            let dep_html = ``;
+
+            for(let i=0; i < data.length; i++){
+                depArray.push(data[i]);
+            }
+
+            for(let i=0; i < depArray.length; i++){
+                // Modify the following line to match your department list HTML structure
+                dep_html += `<tr id="${depArray[i].id}" class=" depTableRow" ... ></tr>`;
+            }
+
+            $('#departmentsList').html(dep_html); // Replace 'departmentsList' with the ID of the element containing the department list
+        },
+
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    });
+}
+
     // Department Modal Behaviour
-    $(`#departments`).on('click', event => {
+$(`#departments`).on('click', event => {
+
+    // Initially update the department list when the modal is opened
+    updateDepartmentList();
 
         $('.modal-backdrop').show(); // Show the grey overlay.
         generateDepartmentList();
@@ -320,7 +354,7 @@ $('.tableRow').click(function() {
                 dataType: 'json',
                 async: false,
                 success: function(results) {
-                    location.reload();
+                    updateDepartmentList();
                 },
         
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -350,7 +384,7 @@ $('.tableRow').click(function() {
                     dataType: 'json',
                     async: false,
                     success: function(results) {
-                        location.reload();
+                        updateDepartmentList();
                     },
             
                     error: function(jqXHR, textStatus, errorThrown) {
@@ -379,7 +413,11 @@ $('.tableRow').click(function() {
             dataType: 'json',
             async: false,
             success: function(results) {
-                location.reload();
+                updateDepartmentList();
+                // Hide the modal and remove the backdrop
+            $('#addDepartmentModal').modal('hide');
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
             },
 
             error: function(jqXHR, textStatus, errorThrown) {
