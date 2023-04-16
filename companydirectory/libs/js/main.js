@@ -16,7 +16,37 @@ $(function(){
 
     // --------------------------------------------------------- Users ---------------------------------------------------------
     
-    
+    // New function to update the user list
+function updateUserList() {
+    $.ajax({
+        type: 'GET',
+        url: "../companydirectory/libs/php/getUser.php",
+        data: {},
+        dataType: 'json',
+        async: false,
+        success: function(results) {
+            let data = results["data"];
+            let userArray = [];
+            let user_html = ``;
+
+            for(let i=0; i < data.length; i++){
+                userArray.push(data[i]);
+            }
+
+            for(let i=0; i < userArray.length; i++){
+                // Modify the following line to match your user list HTML structure
+                user_html += `<tr id="${userArray[i].id}" class="tableRow" ... ></tr>`;
+            }
+
+            $('#userList').html(user_html); // Replace 'userList' with the ID of the element containing the user list
+        },
+
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log('Raw response:', jqXHR.responseText); // Log the raw response data
+            console.log('Error:', errorThrown);
+        }
+    });
+}
     
     // User Modal Behaviour
     $('table').on('click', '.tableRow', function() {
@@ -80,9 +110,11 @@ $(function(){
                 async: false,
                 success: function(results) {
                     // Remove deleted user from the table
+                    updateUserList();
                     $(`#${userID}`).remove();
                     $("#userDeleteModal").modal('hide');
                     $('#deleteConfirm').html("");
+                    toastr.success('Deletion Successful!');
                 },
 
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -121,7 +153,6 @@ $(function(){
                 $('#edit_user_department').html(returned_user.department);
                 $('#edit_user_location').html(returned_user.location);
                 $("#editUserConfirm").attr("userID", returned_user.id);
-
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log(errorThrown);
@@ -166,28 +197,58 @@ $(function(){
         $.ajax({
             type: 'POST',
             url: "../companydirectory/libs/php/updateUser.php",
-            data: $(this).serialize(),
+            data: {
+                firstName: $('#edit_user_firstName').val(),
+                lastName: $('#edit_user_lastName').val(),
+                email: $('#edit_user_email').val(),
+                jobTitle: $('#edit_user_jobTitle').val(),
+                departmentID: $('#edit_user_department').val(),
+                id: $("#editUserConfirm").attr("userID")
+            },
             dataType: 'json',
             async: false,
             success: function(results) {
-                const userID = $("#editUserConfirm").attr("userID");
-                // Update edited user in the table
-                $(`#${userID} td:nth-child(2)`).text($('#edit_user_firstName').val());
-                $(`#${userID} td:nth-child(3)`).text($('#edit_user_lastName').val());
-                $(`#${userID} td:nth-child(4)`).text($('#edit_user_email').val());
-                $(`#${userID} td:nth-child(5)`).text($('#edit_user_jobTitle').val());
-                $(`#${userID} td:nth-child(6)`).text($('#edit_user_department option:selected').text());
-                $(`#${userID} td:nth-child(7)`).text($('#edit_user_location').text());
-                $("#userEditModal").modal('hide');
-                $('.modal-backdrop').hide(); // Hide the grey overlay.
+                updateUserList();
             },
 
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log(errorThrown);
             }
-        })
-
+        }) 
+        
     });
+
+    // Confirm Edit User -> PHP Routine
+$("#editUserForm").submit(function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    $.ajax({
+        type: 'POST',
+        url: "../companydirectory/libs/php/updateUser.php",
+        data: $(this).serialize(),
+        dataType: 'json',
+        async: false,
+        success: function(results) {
+            const userID = $("#editUserConfirm").attr("userID");
+            // Update edited user in the table
+            $(`#${userID} td:nth-child(2)`).text($('#edit_user_firstName').val());
+            $(`#${userID} td:nth-child(3)`).text($('#edit_user_lastName').val());
+            $(`#${userID} td:nth-child(4)`).text($('#edit_user_email').val());
+            $(`#${userID} td:nth-child(5)`).text($('#edit_user_jobTitle').val());
+            $(`#${userID} td:nth-child(6)`).text($('#edit_user_department option:selected').text());
+            $(`#${userID} td:nth-child(7)`).text($('#edit_user_location').text());
+            $("#userEditModal").modal('hide');
+            $('.modal-backdrop').hide(); // Hide the grey overlay.
+            // Update the user list with the updated data
+            updateUserList();
+            toastr.success('Update complete!');
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    })
+});
 
 
     // Add User Modal
@@ -226,32 +287,36 @@ $(function(){
     });
 
     // Confirm Add User -> PHP Routine
-    $("#newUserForm").submit(function(e) {
+$("#newUserForm").submit(function(e) {
 
-        e.preventDefault();
-        e.stopPropagation();
+    e.preventDefault();
+    e.stopPropagation();
 
-        $.ajax({
-            type: 'POST',
-            url: "../companydirectory/libs/php/insertUser.php",
-            data: {
-                firstName: $('#add_user_firstName').val(),
-                lastName: $('#add_user_lastName').val(),
-                email: $('#add_user_email').val(),
-                jobTitle: $('#add_user_jobTitle').val(),
-                departmentID: $('#add_user_department').val()
-            },
-            dataType: 'json',
-            async: false,
-            success: function(results) {
-                location.reload();
-            },
+    $.ajax({
+        type: 'POST',
+        url: "../companydirectory/libs/php/insertUser.php",
+        data: {
+            firstName: $('#add_user_firstName').val(),
+            lastName: $('#add_user_lastName').val(),
+            email: $('#add_user_email').val(),
+            jobTitle: $('#add_user_jobTitle').val(),
+            departmentID: $('#add_user_department').val()
+        },
+        dataType: 'json',
+        async: false,
+        success: function(results) {
+            $('#addUserModal').modal('hide');
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
+            updateUserList(); // update user list with new user data
+            toastr.success('User has been added successfully! Use the search function to locate them!');
+        },
 
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.log(errorThrown);
-            }
-        })
-    });
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    })
+});
 
     // --------------------------------------------------------- Departments ---------------------------------------------------------
 
@@ -362,6 +427,7 @@ $(`#departments`).on('click', event => {
                 async: false,
                 success: function(results) {
                     updateDepartmentList();
+                    toastr.success('Update Successful!');
                 },
         
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -392,6 +458,7 @@ $(`#departments`).on('click', event => {
                     async: false,
                     success: function(results) {
                         updateDepartmentList();
+                        toastr.success('Deletion Successful!');
                     },
             
                     error: function(jqXHR, textStatus, errorThrown) {
@@ -425,6 +492,7 @@ $(`#departments`).on('click', event => {
             $('#addDepartmentModal').modal('hide');
             $('.modal-backdrop').remove();
             $('body').removeClass('modal-open');
+            toastr.success('Department Added Successfully!');
             },
 
             error: function(jqXHR, textStatus, errorThrown) {
@@ -514,6 +582,7 @@ $(`#locations`).on('click', event => {
                     dataType: 'json',
                     async: false,
                     success: function(results) {
+                        toastr.success('Deletion Successful!');
                     },
             
                     error: function(jqXHR, textStatus, errorThrown) {
@@ -541,6 +610,7 @@ $(`#locations`).on('click', event => {
             async: false,
             success: function(results) {
                 updateLocationsList();
+                toastr.success('Update Successful!');
             },
     
             error: function(jqXHR, textStatus, errorThrown) {
@@ -575,6 +645,7 @@ $("#addLocForm").submit(function(e) {
             $('#addLocationModal').modal('hide');
             $('.modal-backdrop').remove();
             $('body').removeClass('modal-open');
+            toastr.success('Location Added Successfully!');
         },
 
         error: function(jqXHR, textStatus, errorThrown) {
@@ -588,58 +659,58 @@ $("#addLocForm").submit(function(e) {
     // --------------------------------------------------------- Search Functions ---------------------------------------------------------
     
     // Search Functionality
-    function makeAjaxRequest(url) {
-        $.ajax({
-          type: 'GET',
-          url: url,
-          data: {
+function makeAjaxRequest(url) {
+    $.ajax({
+        type: 'GET',
+        url: url,
+        data: {
             search: "%" + document.getElementById("searchField").value + "%"
-          },
-          dataType: 'json',
-          async: false,
-          success: function(results) {
+        },
+        dataType: 'json',
+        async: false,
+        success: function(results) {
             generateSearchResultsUsers(results);
-          },
-      
-          error: function(jqXHR, textStatus, errorThrown) {
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            toastr.warning('No search results found');
             console.log(errorThrown);
-          }
-        });
-      }
-        $("#search").click(function(){
-  $("#resetBtn").attr("style", "visibility: visible");
-  var option = $('#searchSelect').val();
-  
-  if(option == 'firstName'){
-    makeAjaxRequest("../companydirectory/libs/php/search_firstName.php");
-  } else if (option == 'lastName'){
-    makeAjaxRequest("../companydirectory/libs/php/search_lastName.php");
-  } else if (option == 'email'){
-    makeAjaxRequest("../companydirectory/libs/php/search_email.php");
-  } else if (option == 'jobTitle'){
-    makeAjaxRequest("../companydirectory/libs/php/search_jobTitle.php");
-  } else if (option == 'department'){
-    makeAjaxRequest("../companydirectory/libs/php/search_department.php");
-  } else if (option == 'location'){
-    makeAjaxRequest("../companydirectory/libs/php/search_location.php");
-  }
+        }
+    });
+}
+$("#search").click(function() {
+    $("#resetBtn").attr("style", "visibility: visible");
+    var option = $('#searchSelect').val();
+
+    if (option == 'firstName') {
+        makeAjaxRequest("../companydirectory/libs/php/search_firstName.php");
+    } else if (option == 'lastName') {
+        makeAjaxRequest("../companydirectory/libs/php/search_lastName.php");
+    } else if (option == 'email') {
+        makeAjaxRequest("../companydirectory/libs/php/search_email.php");
+    } else if (option == 'jobTitle') {
+        makeAjaxRequest("../companydirectory/libs/php/search_jobTitle.php");
+    } else if (option == 'department') {
+        makeAjaxRequest("../companydirectory/libs/php/search_department.php");
+    } else if (option == 'location') {
+        makeAjaxRequest("../companydirectory/libs/php/search_location.php");
+    }
 });
 
-    // Reset button functionalit
-    $("#resetBtn").on('click', () => {
-        $("#resetBtn").attr("style", "visibility: hidden");
-        $("#searchField").val("");
-        getAllUsers();        
-    }) 
+// Reset button functionalit
+$("#resetBtn").on('click', () => {
+    $("#resetBtn").attr("style", "visibility: hidden");
+    $("#searchField").val("");
+    getAllUsers();
+})
 
-    // Dynamic behaviour for searchBar
-    $(window).on('resize', function() {
-        var win = $(this);
-        if (win.width() < 1250) {
-          $('#searchBar').removeClass('col-6');
-          $('#searchBar').addClass('col-10');
-        }
-      });
+// Dynamic behaviour for searchBar
+$(window).on('resize', function() {
+    var win = $(this);
+    if (win.width() < 1250) {
+        $('#searchBar').removeClass('col-6');
+        $('#searchBar').addClass('col-10');
+    }
+});
 
 function generateSearchResultsUsers(results){
     let searchData = results["data"];
@@ -653,13 +724,16 @@ function generateSearchResultsUsers(results){
         search_html_table += `<tr class="tableRow" id="${list[i].id}"><td scope="row" class="tableIcon"><i class="fas fa-user-circle fa-lg"></i></td><td scope="row">${list[i].firstName}</td><td scope="row">${list[i].lastName}</td><td scope="row" class="hider1">${list[i].email}</td><td scope="row" class="hider1">${list[i].jobTitle}</td><td scope="row" class="hider2">${list[i].department}</td><td scope="row" class="hider2">${list[i].location}</td></tr>`;
         
     }
-    
-    //$('#mainTable').html(`${search_html_table}`);
-    $('#sqlTable').find('tbody').html(`${search_html_table}`);
 
+    if (search_html_table === "") {
+        toastr.info('No Search Results Found');
+    } else {
+        $('#sqlTable').find('tbody').html(`${search_html_table}`);
+        toastr.success('Located Successfully!');
+    }
 }
 
-function getLocations(){
+function getLocations() {
     $.ajax({
         type: 'GET',
         url: "../companydirectory/libs/php/getLocations.php",
@@ -671,16 +745,17 @@ function getLocations(){
             currentLocations = [];
             let data = results["data"];
 
-            for(let i=0; i < data.length; i++){
+            for (let i = 0; i < data.length; i++) {
                 currentLocations.push(data[i]);
             }
 
         },
 
         error: function(jqXHR, textStatus, errorThrown) {
+            toastr.warning('No search results found');
             console.log(errorThrown);
         }
-    })   
+    })
 }
 
 function getDepartmentsByUser(){
@@ -699,9 +774,12 @@ function getDepartmentsByUser(){
                 currentDepartments.push(data[i]);
             }
 
+            toastr.success('Departments retrieved successfully!');
+
         },
 
         error: function(jqXHR, textStatus, errorThrown) {
+            toastr.error('Failed to retrieve departments!');
             console.log(errorThrown);
         }
     })   
@@ -730,10 +808,12 @@ function generateDepartmentList(){
             }
 
             $('#departmentsList').html(dep_html);
+            toastr.success('Department List Generated Successfully!');
 
         },
 
         error: function(jqXHR, textStatus, errorThrown) {
+            toastr.warning('No search results found');
             console.log(errorThrown);
         }
     })     
@@ -767,6 +847,7 @@ function getAllUsers(){
 
         },
         error: function(jqXHR, textStatus, errorThrown) {
+            toastr.warning('No search results found');
             console.log(errorThrown);
         }
     })
