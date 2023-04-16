@@ -438,7 +438,7 @@ $(`#departments`).on('click', event => {
         })
 
         // Delete Department
-        $("#departmentDelete").click(function(){      
+        $("#departmentDelete").unbind("click").click(function(){      
     
             $('.modal-backdrop').show(); // Show the grey overlay.
             $('#delDepName').html(`${this['attributes']['departmentName']['value']}`);
@@ -562,7 +562,7 @@ $(`#locations`).on('click', event => {
         });
 
         // Delete Location -> PHP Routine
-        $("#locationDelete").click(function(){
+        $("#locationDelete").off("click").on("click", function(){
             
             $('#delLocName').html(`${this['attributes']['locationName']['value']}`);
 
