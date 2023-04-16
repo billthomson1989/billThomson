@@ -15,8 +15,11 @@ $(function(){
     getAllUsers();
 
     // --------------------------------------------------------- Users ---------------------------------------------------------
+    
+    
+    
     // User Modal Behaviour
-$('.tableRow').click(function() {
+    $('table').on('click', '.tableRow', function() {
 
     var current_user;
     current_user = this.id
@@ -59,39 +62,42 @@ $('.tableRow').click(function() {
 
         
         // Delete User
-        $("#delete").click(function(){      
-            
-            $("#userDeleteModal").modal('show');      
-            $('#deleteConfirm').html(`${$('#userSelectModalLabel').html()}<br>`);
-          
-            $(`#delUserConfirm`).on('click', event => {
-                var userID = $('#user_id').val();
-               
-                $.ajax({
-                    type: 'POST',
-                    url: "./libs/php/deleteUserByID.php",
-                    data: {
-                        id: userID,
-                    },
-                    dataType: 'json',
-                    async: false,
-                    success: function(results) {
-                        location.reload();
-                    },
-            
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        console.log(errorThrown);
-                    }
-                }) 
+    $("#delete").click(function() {
+
+        $("#userDeleteModal").modal('show');
+        $('#deleteConfirm').html(`${$('#userSelectModalLabel').html()}<br>`);
+
+        $(`#delUserConfirm`).on('click', event => {
+            var userID = $('#user_id').val();
+
+            $.ajax({
+                type: 'POST',
+                url: "./libs/php/deleteUserByID.php",
+                data: {
+                    id: userID,
+                },
+                dataType: 'json',
+                async: false,
+                success: function(results) {
+                    // Remove deleted user from the table
+                    $(`#${userID}`).remove();
+                    $("#userDeleteModal").modal('hide');
+                    $('#deleteConfirm').html("");
+                },
+
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                }
             })
-        });
+        })
+    })
 
     })
 
     // Edit User
-    $("#edit").click(function(){      
+    $("#edit").click(function() {
 
-        $("#userEditModal").modal('show'); 
+        $("#userEditModal").modal('show');
         $('.modal-backdrop').show(); // Show the grey overlay.
 
         // Generate specific user details
@@ -107,7 +113,7 @@ $('.tableRow').click(function() {
 
                 const data = results["data"]
                 const returned_user = data.personnel['0'];
-                
+
                 $('#edit_user_firstName').val(returned_user.firstName);
                 $('#edit_user_lastName').val(returned_user.lastName);
                 $('#edit_user_email').val(returned_user.email);
@@ -115,7 +121,6 @@ $('.tableRow').click(function() {
                 $('#edit_user_department').html(returned_user.department);
                 $('#edit_user_location').html(returned_user.location);
                 $("#editUserConfirm").attr("userID", returned_user.id);
-
 
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -126,30 +131,30 @@ $('.tableRow').click(function() {
         getDepartmentsByUser();
 
         let departmentSelection = "";
-        for(i=0; i<currentDepartments.length; i++){
-            if(currentDepartments[i].department == $('#edit_user_department').html()){
+        for (i = 0; i < currentDepartments.length; i++) {
+            if (currentDepartments[i].department == $('#edit_user_department').html()) {
                 departmentSelection += `<option value="${currentDepartments[i].id}" selected="selected">${currentDepartments[i].department}</option>`
             } else {
                 departmentSelection += `<option value="${currentDepartments[i].id}">${currentDepartments[i].department}</option>`
-            }                
+            }
         }
 
         $('#edit_user_department').html(departmentSelection);
 
-        $("#edit_user_department").change(function(){
-            
+        $("#edit_user_department").change(function() {
+
             let locationSelectionHTML = "";
             let locationID = document.getElementById('edit_user_department').value;
-            
-            for(let i=0; i < currentDepartments.length; i++){
-                if (currentDepartments[i]['id'] == locationID){
+
+            for (let i = 0; i < currentDepartments.length; i++) {
+                if (currentDepartments[i]['id'] == locationID) {
                     locationSelectionHTML = `${currentDepartments[i]['location']}`
                 }
             }
-            
+
             $('#edit_user_location').html(locationSelectionHTML);
         })
-    
+
     });
 
     // Confirm Edit User -> PHP Routine
@@ -161,25 +166,27 @@ $('.tableRow').click(function() {
         $.ajax({
             type: 'POST',
             url: "../companydirectory/libs/php/updateUser.php",
-            data: {
-                firstName: $('#edit_user_firstName').val(),
-                lastName: $('#edit_user_lastName').val(),
-                email: $('#edit_user_email').val(),
-                jobTitle: $('#edit_user_jobTitle').val(),
-                departmentID: $('#edit_user_department').val(),
-                id: $("#editUserConfirm").attr("userID")
-            },
+            data: $(this).serialize(),
             dataType: 'json',
             async: false,
             success: function(results) {
-                location.reload();
+                const userID = $("#editUserConfirm").attr("userID");
+                // Update edited user in the table
+                $(`#${userID} td:nth-child(2)`).text($('#edit_user_firstName').val());
+                $(`#${userID} td:nth-child(3)`).text($('#edit_user_lastName').val());
+                $(`#${userID} td:nth-child(4)`).text($('#edit_user_email').val());
+                $(`#${userID} td:nth-child(5)`).text($('#edit_user_jobTitle').val());
+                $(`#${userID} td:nth-child(6)`).text($('#edit_user_department option:selected').text());
+                $(`#${userID} td:nth-child(7)`).text($('#edit_user_location').text());
+                $("#userEditModal").modal('hide');
+                $('.modal-backdrop').hide(); // Hide the grey overlay.
             },
 
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log(errorThrown);
             }
-        }) 
-        
+        })
+
     });
 
 
@@ -303,7 +310,7 @@ $(`#departments`).on('click', event => {
         });
 
         // Edit Department       
-        $('.depTableRow').click(function(){
+        $('#departmentsList').on('click', '.depTableRow', function() {
             
             $('.modal-backdrop').show(); // Show the grey overlay.
 

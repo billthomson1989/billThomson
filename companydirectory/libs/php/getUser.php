@@ -4,8 +4,6 @@
 
 	include("config.php");
 
-	#header('Content-Type: application/json; charset=UTF-8');
-
 	$conn = new mysqli($cd_host, $cd_user, $cd_password, $cd_dbname, $cd_port, $cd_socket);
 
 	if (mysqli_connect_errno()) {
@@ -24,9 +22,7 @@
 
 	}	
 
-	// SQL does not accept parameters and so is not prepared
-
-	$query = 'SELECT p.id, p.lastName, p.firstName, p.jobTitle, p.email, d.name as department, l.name as location FROM personnel p LEFT JOIN department d ON (d.id = p.departmentID) LEFT JOIN location l ON (l.id = d.locationID) WHERE p.id = ?';
+	$query = 'SELECT p.id, p.lastName, p.firstName, p.jobTitle, p.email, d.name as department, l.name as location FROM personnel p LEFT JOIN department d ON (d.id = p.departmentID) LEFT JOIN location l ON (l.id = d.locationID)';
 
 	$result = $conn->query($query);
 	
