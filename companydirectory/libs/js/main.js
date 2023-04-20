@@ -9,6 +9,12 @@ let jobTitle_toggle = true;
 let department_toggle = true;
 let location_toggle = true;
 
+$(window).on('load', function(){
+    $('#preloader').fadeOut('slow', function() {
+        $(this).remove();
+    });
+});
+
 // Main AJAX & jQuery Code
 $(function(){
 
