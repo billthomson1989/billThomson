@@ -644,107 +644,7 @@ $(`#locations`).on('click', event => {
             })
         });
     });    
-// Delete Department
-$("#departmentDelete").unbind("click").click(function(){      
-    
-    $('.modal-backdrop').show(); // Show the grey overlay.
-    $('#delDepName').html(`${this['attributes']['departmentName']['value']}`);
 
-    var depID = this.attributes.departmentID.value;
-    
-    // Check if department is in use
-    $.ajax({
-        url: "../companydirectory/libs/php/checkDepartmentUse.php",
-        type: 'POST',
-        dataType: 'json',
-        data: {
-            id: depID
-        },
-        success: function (result) {
-            if (result.status.name == "ok") {
-                if (result.data[0].departmentCount == 0) {
-                    // Department is not in use, can be deleted
-                    // Open the delete confirmation modal
-                    $('#deleteConfirmationModal').modal('show');
-
-                    $("#delDepConfirm").off('click').on('click', function(){ 
-                        var depIDInt = parseInt(depID)
-
-                        $.ajax({
-                            type: 'POST',
-                            url: "../companydirectory/libs/php/deleteDepartmentByID.php",
-                            data: {
-                                id: depIDInt,
-                            },
-                            dataType: 'json',
-                            async: false,
-                            success: function(results) {
-                                updateDepartmentList();
-                                toastr.success('Deletion Successful!');
-                                $('#deleteConfirmationModal').modal('hide');
-                            },
-                    
-                            error: function(jqXHR, textStatus, errorThrown) {
-                                console.log(errorThrown);
-                            }
-                        })
-                    })
-                } else {
-                    // Department is in use, cannot be deleted
-                    // Open the modal indicating department is in use
-                    $('#departmentInUseModal').modal('show');
-                }    
-            } else {
-                console.log("Error retrieving data");
-            } 
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log("Error retrieving data");
-        }
-    });
-});
-
-    // Add Department -> PHP Routine
-$("#addDepForm").submit(function(e) {
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    let newDepName = $('#newDepName').val();
-    let newLocId = $('#newDepLocation').val();
-    let newLocName = $('#newDepLocation option:selected').text();
-
-    $.ajax({
-        type: 'POST',
-        url: "../companydirectory/libs/php/insertDepartment.php",
-        data: {
-            name: newDepName,
-            locationID: newLocId
-        },
-        dataType: 'json',
-        async: false,
-        success: function(result) {
-            let html_row = `<tr class="depTableRow" title="${newDepName}" departmentID="${result.id}" location="${newLocId}" users="0">
-                <td>${newDepName}</td>
-                <td>${newLocName}</td>
-                <td><button class="editDepartmentBtn" style="background-color: gold;"><i class="fas fa-pencil-alt"></i></button></td>
-                <td><button class="deletDepBtn" style="background-color: red;"><i class="fa-regular fa-trash-can"></i></button></td>
-            </tr>`;
-            $("#mainTable").append(html_row);
-
-            // Hide the modal and remove the backdrop
-            $('#addDepartmentModal').modal('hide');
-            $('.modal-backdrop').remove();
-            $('body').removeClass('modal-open');
-            toastr.success('Department Added Successfully!');
-        },
-
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log(errorThrown);
-        }
-    })
-
-})
 
     // --------------------------------------------------------- Locations ---------------------------------------------------------
 
@@ -1231,13 +1131,16 @@ if (tab === "department") {
                     data: { id: depID },
                     dataType: 'json',
                     success: function (result) {
-                        console.log(result);  // This line will print the entire response object to the console
-                        console.log("Attempting to show modal");
+                        console.log('Inside success function');
+                        console.log('Department count: ', result.departmentCount);
                         if (result.departmentCount > 0) {
+                            console.log('Inside if condition');
                             // If there are personnel in the department, show the modal with the warning message
                             $('#delDepName').text(result.departmentName);
                             $('#delDepCount').text(result.departmentCount);
+                            console.log('Before showing modal');
                             $('#deleteDepConfirmWithPersonnel').modal('show');
+                            console.log('After showing modal');
                         } else {
                             // If there are no personnel in the department, show the confirmation delete modal
                             $('#delDepName').text(result.departmentName);
@@ -1364,6 +1267,8 @@ $('#delDepConfirm').on('click', function(e) {
                 getDepartmentData();
                 // Show a success message
                 toastr.success('Department successfully deleted.', 'Success!');
+                // Close the modal
+                $('#departmentDeleteModal').modal('hide');
             } else {
                 // If there was an error, display it
                 console.log(result.status.description);
