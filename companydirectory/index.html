@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <title>Company Directory</title>
         <meta name="author" content="Bill Thomson">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- Favicon -->
         <link rel="apple-touch-icon" sizes="180x180" href="libs/favicon/apple-touch-icon.png">
@@ -18,11 +18,14 @@
         <!-- Bootstrap -->
         <link rel="stylesheet" href="libs/css/bootstrap.min.css">
 
-        <!-- Toastr -->
-        <link rel="stylesheet" href="libs/css/toastr.css">
 
         <!-- Stylesheet -->
         <link rel="stylesheet" type="text/css" href="libs/css/style.css">
+        
+        <!-- Toastr -->
+        <link rel="stylesheet" href="libs/css/toastr.css">
+
+        
     </head>
 
     <body>
@@ -35,81 +38,113 @@
                     </div>
                 </div>
 
-                <!-- Search Bar -->
-                <div class="row" id="functionRow">
-                    <div class="col searchBar">
-                        <div id="justifySearch">
-                            <div class="col-xs reset">
-                                <span id="resetBtn" alt="Reset Results"><i class="fas fa-undo"></i></span>
-                            </div>
-                            <div id="searchBar" class="col-6">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <select id="searchSelect" name="searchSelect" class="custom-select">
-                                            <option value="firstName" selected>First Name</option>
-                                            <option value="lastName">Last Name</option>
-                                            <option value="email">Email</option>
-                                            <option value="jobTitle">Job Title</option>
-                                            <option value="department">Department</option>
-                                            <option value="location">Location</option>
-                                        </select> 
-                                    </div> 
-                                    <input id="searchField" name="text" type="text" placeholder="Search.." class="form-control" required> 
-                                    <div class="input-group-append">
-                                        <div class="input-group-text" id="search">
-                                            <i class="fa fa-search"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> 
-
-                <!-- Add Staff, Departments, and Locations Buttons -->
-                <div class="row">
-                    <div class="col buttonRow">
-                        <button type="button" id="addUser" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                            <i class="fas fa-user-plus"></i>
-                            <br>Add Staff
-                        </button>
-                        <button type="button" id="departments" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#departmentsModal">
-                            <i class="fas fa-building"></i>
-                            <br>Add Departments
-                        </button>
-                        <button type="button" id="locations" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#locationsModal">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <br>Add Locations
-                        </button>
-                    </div>
+                 <!-- Search Bar -->
+<div class="row justify-content-center mt-3">
+    <div class="col-md-6 searchBar">
+        <div class="input-group">
+            <select id="searchSelect" name="searchSelect" class="custom-select">
+                <option value="lastName"selected>Last Name</option>
+                <option value="firstName">First Name</option>
+                <option value="email">Email</option>
+                <option value="jobTitle">Job Title</option>
+                <option value="department">Department</option>
+                <option value="location">Location</option>
+            </select>
+            <input id="searchField" name="text" type="text" placeholder="Search.." class="form-control" required>
+            <div class="input-group-append">
+                <button id="resetBtn" type="button" class="btn btn-secondary" style="visibility: hidden;"><i class="fas fa-undo"></i></button>
+                <div class="input-group-text" id="search">
+                    <i class="fa fa-search"></i>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+            
+
+               <!-- Add Staff, Departments, and Locations Buttons -->
+<div class="row justify-content-center mt-3">
+    <div class="col-6 col-sm-4 col-md-2 mb-3">
+        <button type="button" id="addUser" class="btn btn-primary btn-block custom-btn" data-bs-toggle="modal" data-bs-target="#addUserModal">
+            <i class="fas fa-user-plus"></i>
+            <br>Add Personnel
+        </button>
+    </div>
+    <div class="col-6 col-sm-4 col-md-2 mb-3">
+        <button type="button" id="departments" class="btn btn-primary btn-block custom-btn" data-bs-toggle="modal" data-bs-target="#departmentsModal">
+            <i class="fas fa-building"></i>
+            <br>Add Departments
+        </button>
+    </div>
+    <div class="col-6 col-sm-4 col-md-2 mb-3">
+        <button type="button" id="locations" class="btn btn-primary btn-block custom-btn" data-bs-toggle="modal" data-bs-target="#locationsModal">
+            <i class="fas fa-map-marker-alt"></i>
+            <br>Add Locations
+        </button>
+    </div>
+</div>
+
+<!--  Staff, Departments, and Locations Tab Content -->
+<ul class="nav nav-tabs nav-fill flex-sm-row" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link tab-custom active" id="personnel-tab" data-bs-toggle="tab" data-bs-target="#personnel" type="button" role="tab" aria-controls="personnel" aria-selected="true">Personnel</button>
+    </li> 
+    <li class="nav-item" role="presentation">
+      <button class="nav-link tab-custom" id="department-tab" data-bs-toggle="tab" data-bs-target="#department" type="button" role="tab" aria-controls="department" aria-selected="false">Department</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link tab-custom" id="location-tab" data-bs-toggle="tab" data-bs-target="#location" type="button" role="tab" aria-controls="location" aria-selected="false">Location</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="personnel" role="tabpanel" aria-labelledby="personnel-tab">
+    <!-- Personnel tab content goes here -->
+  </div>
+  <div class="tab-pane fade" id="department" role="tabpanel" aria-labelledby="department-tab">
+    <!-- Department tab content goes here -->
+  </div>
+  <div class="tab-pane fade" id="location" role="tabpanel" aria-labelledby="location-tab">
+    <!-- Location tab content goes here -->
+  </div>
+</div>
+
+
                 
                 <!-- Main Table -->
-                <div class="row">
-                    <div class="row">
-                        <div class="col">
-                            <div class="tableHolder">
-                                <div class="tableFixHead">
-                                    <table class="table-striped" id="sqlTable">
-                                        <thead class="tableHead">
-                                            <tr>
-                                                <th scope="col" class="tableIcon"></th>
-                                                <th scope="col" id="firstName">First Name</th>
-                                                <th scope="col" id="lastName">Last Name</th>
-                                                <th scope="col" id="email" class="hider1">Email</th>
-                                                <th scope="col" id="jobTitle" class="hider1">Job Title</th>
-                                                <th scope="col" id="department" class="hider2">Department</th>
-                                                <th scope="col" id="location" class="hider2">Location</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="mainTable">
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<div class="row">
+    <div class="row">
+        <div class="col">
+            <div class="tableHolder">
+                <div class="tableFixHead">
+                    <table class="table-striped" id="sqlTable">
+                        <thead class="tableHead">
+  <tr>
+    <th scope="col" class="personnel col-12 col-sm-6 col-md-4 col-lg-2" id="lastName">Last Name</th>
+    <th scope="col" class="personnel col-12 col-sm-6 col-md-4 col-lg-2" id="firstName">First Name</th>
+    <th scope="col" class="personnel d-none d-md-table-cell col-md-4 col-lg-2" id="email">Email</th>
+    <th scope="col" class="personnel d-none d-lg-table-cell col-lg-2" id="jobTitle">Job Title</th>
+    <th scope="col" class="department location d-none d-lg-table-cell col-lg-2" id="departmentHeader">Department</th>
+    <th scope="col" class="personnel department location d-none d-lg-table-cell col-lg-2" id="locationHeader">Location</th>
+    <th scope="col" class="personnel" id="editHeader">Edit</th>
+    <th scope="col" class="personnel" id="deleteHeader">Del</th>
+  </tr>
+</thead>
+
+ 
+                        <tbody id="mainTable">
+                            <!-- The table rows will be generated with the same responsive classes applied to the data cells. -->
+                        </tbody>
+                    </table>
+                    
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
                 <!-- User Info Modal -->
                 <div class="modal fade" id="userSelectModal" tabindex="-1" aria-labelledby="userSelectModal" aria-hidden="true">
@@ -220,10 +255,12 @@
 
                         <div class="modal-footer">
                             <div class="form-group row submitBtn">
-                                <div class="col-8 btnAllign">
-                                    <button type="button" class="btn btn-secondary cancelBtn" id="edit" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#userEditModal">Edit <i class="fas fa-edit"></i></button>
-                                    <button type="button" class="btn btn-danger" id="delete" data-bs-dismiss="modal">Delete <i class="fas fa-trash-alt"></i></button>
+                                <div class="modal-footer justify-content-center">
+                                    <button type="button" class="btn btn-secondary cancelBtn custom-btn" id="edit" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#userEditModal">Edit <i class="fas fa-edit"></i></button>
+                                    <button type="button" class="btn btn-danger custom-btn" id="delete" data-bs-dismiss="modal">Delete <i class="fas fa-trash-alt"></i></button>
                                 </div>
+                            </div>
+                                
                             </div>
                         </div>
 
@@ -326,11 +363,14 @@
                             </div>
 
                             <div class="modal-footer">
-                                <div class="form-group row submitBtn">
-                                    <div class="col-8 btnAllign">
-                                        <button type="button" class="btn btn-secondary cancelBtn" data-bs-dismiss="modal">Cancel <i class="fas fa-ban"></i></button>
-                                        <button id="editUserConfirm" name="editUserConfirm" type="submit" class="btn btn-success">Confirm <i class="fas fa-check"></i> </button>
+                                <div class="form-group row justify-content-center submitBtn">
+                                    <div class="btnAllign">
+                                        <button type="button" class="btn btn-secondary cancelBtn custom-btn" data-bs-dismiss="modal">Cancel <i class="fas fa-ban"></i></button>
+                                        <button id="editUserConfirm" name="editUserConfirm" type="submit" class="btn btn-success custom-btn">Confirm <i class="fas fa-check"></i> </button>
                                     </div>
+                                </div>
+                                </div>
+                                
                                 </div>
                             </div>
 
@@ -369,7 +409,7 @@
                         <div class="modal-content">
                             
                             <div class="modal-header">
-                                <h3 class="modal-title">Add Staff</h3>
+                                <h3 class="modal-title text-center">Add Staff</h3>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             
@@ -624,27 +664,43 @@
                     </div>
                 </form>
 
-                <!-- Delete Department Modal -->
-                <div class="modal fade" id="departmentDeleteModal" tabindex="-1" aria-labelledby="departmentDeleteModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="departmentDeleteModalLabel"><i class="fas fa-exclamation-triangle"></i> Delete Location</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal fade" id="deleteDepConfirmWithPersonnel" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Warning</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>There are <span id="delDepCount"></span> personnel in the <span id="delDepName"></span> department. You cannot delete a department that contains personnel.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
                         </div>
-                        <div class="modal-body delete">
-                            
-                            <h3>You are about to delete: <br></h3>
-                            <h2 id="delDepName"></h2>
-    
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel <i class="fas fa-ban"></i></button>
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="delDepConfirm">Delete <i class="fas fa-trash-alt"></i></button>
-                        </div>
-                    </div>
                     </div>
                 </div>
+
+                <div class="modal fade" id="departmentDeleteModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirm Delete</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete the <span id="delDepName"></span> department?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" id="delDepConfirm">Delete</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+  
 
                 <!-- Locations Modal -->
                 <div class="modal fade" id="locationsModal" tabindex="-1" aria-labelledby="locationsModalLabel" aria-hidden="true">
@@ -792,13 +848,15 @@
                 </form>
 
             </div>
-  
                 
 		</main>
 			
 		<!-- jQuery Script -->
 		<script type="application/javascript" src="libs/js/jquery-2.2.3.min.js"></script>
-		
+        
+		<!-- Popper Script  -->
+        <script src="libs/js/popper.min.js"></script>
+        
 		<!-- Bootstrap Script  -->
 		<script src="libs/js/bootstrap.min.js"></script>
         <script src="libs/js/bootstrap.js"></script>
