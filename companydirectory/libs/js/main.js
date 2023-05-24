@@ -1132,24 +1132,24 @@ if (tab === "department") {
                     dataType: 'json',
                     success: function (result) {
                         console.log('Inside success function');
-                        console.log('Department count: ', result.departmentCount);
-                        if (result.departmentCount > 0) {
+                        console.log('Department count: ', result.data.departmentCount);
+                        if (result.data.departmentCount > 0) {
                             console.log('Inside if condition');
                             // If there are personnel in the department, show the modal with the warning message
-                            $('#delDepName').text(result.departmentName);
-                            $('#delDepCount').text(result.departmentCount);
+                            $('#delDepName').text(result.data.departmentName);
+                            $('#delDepCount').text(result.data.departmentCount);
                             console.log('Before showing modal');
                             $('#deleteDepConfirmWithPersonnel').modal('show');
                             console.log('After showing modal');
                         } else {
                             // If there are no personnel in the department, show the confirmation delete modal
-                            $('#delDepName').text(result.departmentName);
+                            $('#delDepName').text(result.data.departmentName);
                             $('#delDepConfirm').data('depID', depID);
                             $('#departmentDeleteModal').modal('show');
                         }
                         $('.btn-close, .btn-secondary').on('click', function () {
                             $('.modal').modal('hide');
-                          });
+                        });
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         console.log(textStatus, errorThrown);
