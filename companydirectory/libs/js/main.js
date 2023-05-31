@@ -892,6 +892,7 @@ for (i = 0; i < list.length; i++) {
         <td scope="row" class="d-none d-xl-table-cell">${list[i].department}</td>
         <td scope="row" class="d-none d-xl-table-cell">${list[i].location}</td>
         <td><button class="editBtn" style="background-color: gold;"><i class="fas fa-pencil-alt"></i></button></td>
+        <td><button class="deleteUserBtn" style="background-color: red;"><i class="fa-regular fa-trash-can"></i></button></td>
     </tr>`;
 }
 
@@ -982,6 +983,7 @@ function getAllUsers() {
                 <td><button class="deleteUserBtn" style="background-color: red;"><i class="fa-regular fa-trash-can"></i></button></td>
             </tr>`).join('');
         $('#mainTable').html(html_table);
+        $('#mainTable').removeClass('initiallyHidden').fadeIn('slow');
     });
 }
 
@@ -1020,11 +1022,14 @@ function updateTableHeaders(tab) {
   
     // Hide all headers first
     $("#sqlTable thead th").css("display", "none");
-  
+
     // Show only the necessary headers
     headers.forEach((headerId) => {
-      $("#" + headerId).css("display", "table-cell");
+      $("#" + headerId).css("display", "");
     });
+
+    // Fade in the visible headers
+    $("#sqlTable thead").removeClass('initiallyHidden').fadeIn('slow');
 
    // Override display property for large screens for the department and location tabs
 if (tab === "department") {
@@ -1042,20 +1047,32 @@ if (tab === "department") {
   }
       
       // Add event listeners for tab clicks
-      $("#personnel-tab").on("click", function () {
-        updateTableHeaders("personnel");
-        getAllUsers();
-      });
-      
-      $("#department-tab").on("click", function () {
-        updateTableHeaders("department");
-        getDepartmentData();
-      });
-      
-      $("#location-tab").on("click", function () {
-        updateTableHeaders("location");
-        getLocationData();
-      });
+$("#personnel-tab").on("click", function () {
+    // Hide the table data and headers
+    $('#mainTable').hide();
+    $("#sqlTable thead").hide();
+
+    updateTableHeaders("personnel");
+    getAllUsers();
+});
+
+$("#department-tab").on("click", function () {
+    // Hide the table data and headers
+    $('#mainTable').hide();
+    $("#sqlTable thead").hide();
+
+    updateTableHeaders("department");
+    getDepartmentData(); 
+});
+
+$("#location-tab").on("click", function () {
+    // Hide the table data and headers
+    $('#mainTable').hide();
+    $("#sqlTable thead").hide();
+
+    updateTableHeaders("location");
+    getLocationData();
+});
       
       
       
@@ -1081,6 +1098,8 @@ if (tab === "department") {
                 });
     
                 $("#mainTable").html(html_table);
+                // Use fadeIn to smoothly display the data
+                $("#mainTable").removeClass('initiallyHidden').fadeIn('slow');
     
                 $("#mainTable").on('click', '.editDepartmentBtn', function(e) {
                 e.stopPropagation();
@@ -1301,6 +1320,8 @@ function getLocationData() {
             });
 
             $("#mainTable").html(html_table);
+             // Use fadeIn to smoothly display the data
+             $("#mainTable").removeClass('initiallyHidden').fadeIn('slow');
         },
         error: function (jqXHR, textStatus, errorThrown) {
             toastr.warning("No search results found");
@@ -1327,25 +1348,47 @@ $(document).on('click', '.editLocationBtn', function() {
 });
 });
 
-
 // Click event for delete button
 $(document).on('click', '.deleteLocBtn', function() {
-    // Get location id from the button
+    // Get location id and name from the button
     let locID = $(this).attr('locationID');
     let locName = $(this).attr('locationName');
-    // Set the location name and id in the modal
-    $('#delLocName').text(locName);
-    $('#delLocConfirm').data('locID', locID);
     
-    // Show the delete confirmation modal
-    $('#locationDeleteModal').modal('show');
+    // Check if the location has departments associated with it
+    $.ajax({
+        type: 'POST',
+        url: '../companydirectory/libs/php/checkLocationUse.php',
+        data: { id: locID },
+        dataType: 'json',
+        success: function (result) {
+            console.log('Inside success function');
+            console.log('Department count: ', result.data.departmentCount);
+            if (result.data.departmentCount > 0) {
+                console.log('Inside if condition');
+                // If there are departments in the location, show the modal with the warning message
+                $('#delLocName').text(result.data.locationName);
+                $('#delLocCount').text(result.data.departmentCount);
+                console.log('Before showing modal');
+                $('#deleteLocConfirmWithDepartments').modal('show');
+                console.log('After showing modal');
+            } else {
+                // If there are no departments in the location, show the confirmation delete modal
+                $('#delLocNameConfirm').text(result.data.locationName);
+                $('#delLocConfirm').data('locID', locID);
+                $('#locationDeleteModal').modal('show');
+            }
+            $('.btn-close, .btn-secondary').on('click', function () {
+                $('.modal').modal('hide');
+            });
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, errorThrown);
+        }
+    });
 });
 
-// Form submission for delete confirmation
-$('#delLocForm').on('submit', function(e) {
-    e.preventDefault();  // Prevent the form from being submitted
-    e.stopPropagation(); // Stop propagation of the event
-
+// Event handler for delete confirmation
+$('#delLocConfirmButton').off('click').on('click', function() {
     let locID = $('#delLocConfirm').data('locID'); // Get the location id
 
     $.ajax({
@@ -1360,76 +1403,51 @@ $('#delLocForm').on('submit', function(e) {
             toastr.success('Deletion Successful!');
             // Manually remove the row from the table
             $('.deleteLocBtn[locationID="' + locID + '"]').closest('tr').remove();
+            // Hide the modal
+            $('#locationDeleteModal').modal('hide');
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(errorThrown);
         }
     });
-});
-
-
-function getLocationData() {
-    $.ajax({
-        type: "GET",
-        url: "../companydirectory/libs/php/getLocations.php",
-        dataType: "json",
-        success: function (results) {
-            let data = results["data"];
-            let html_table = "";
-
-            data.forEach((location) => {
-                html_table += `<tr>
-                    <td>${location.location}</td>
-                    <td><button class="editLocationBtn locationEdit" style="background-color: gold;" locationName="${location.location}" locationID="${location.id}" departments="${location.departments}"><i class="fas fa-pencil-alt"></i></button></td>
-                    <td><button class="deleteLocBtn locationDelete" style="background-color: red;" locationName="${location.location}" locationID="${location.id}" departments="${location.departments}"><i class="fa-regular fa-trash-can"></i></button></td>
-                </tr>`;
-            });
-
-            $("#mainTable").html(html_table);
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            toastr.warning("No search results found");
-            console.log(errorThrown);
-        }
-    });
-}
-
-$(document).on('click', '.editLocationBtn', function() {
-    // Populate the input field
-    $('#edit_location_name').val(this.getAttribute('locationName'));
-    $('#edit_location_name').attr("locID", this.getAttribute('locationID'));
-
-    if (this.getAttribute('departments') == 0){
-        $("#deleteLocBtn").show();
-        $("#locationDelete").attr("locationName",this.getAttribute('locationName'));
-        $("#locationDelete").attr("locationID",this.getAttribute('locationID'));
-    } else {
-        $("#deleteLocBtn").hide();
-    }
-    
-    // Open the modal
-    $('#locationEditModal').modal('show');
-});
+})
 
 // Click event for delete button
 $(document).on('click', '.deleteLocBtn', function() {
     // Get location id from the button
     let locID = $(this).attr('locationID');
     let locName = $(this).attr('locationName');
-    // Set the location name and id in the modal
-    $('#delLocName').text(locName);
-    $('#delLocConfirm').data('locID', locID);
     
-    // Show the delete confirmation modal
-    $('#locationDeleteModal').modal('show');
+    $.ajax({
+        type: 'POST',
+        url: '../companydirectory/libs/php/checkLocationUse.php',
+        data: { id: locID },
+        dataType: 'json',
+        success: function (result) {
+            if (result.data.departmentCount > 0) {
+                // If there are departments in the location, show the modal with the warning message
+                $('#delLocName').text(result.data.locationName);
+                $('#delLocCount').text(result.data.departmentCount);
+                $('#deleteLocConfirmWithDepartments').modal('show');
+            } else {
+                // If there are no departments in the location, show the confirmation delete modal
+                $('#delLocName').text(result.data.locationName);
+                $('#delLocConfirm').data('locID', locID);
+                $('#locationDeleteModal').modal('show');
+            }
+            $('.btn-close, .btn-secondary').on('click', function () {
+                $('.modal').modal('hide');
+            });
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, errorThrown);
+        }
+    });
 });
 
-// Form submission for delete confirmation
-$('#delLocForm').on('submit', function(e) {
-    e.preventDefault();  // Prevent the form from being submitted
-    e.stopPropagation(); // Stop propagation of the event
-
-    let locID = $('#delLocConfirm').data('locID'); // Get the location id
+// Click event for delete confirmation button
+$(document).on('click', '#delLocConfirm', function() {
+    let locID = $(this).data('locID'); // Get the location id
 
     $.ajax({
         type: 'POST',
@@ -1443,6 +1461,8 @@ $('#delLocForm').on('submit', function(e) {
             toastr.success('Deletion Successful!');
             // Manually remove the row from the table
             $('.deleteLocBtn[locationID="' + locID + '"]').closest('tr').remove();
+            // Hide the modal
+            $('#locationDeleteModal').modal('hide');
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(errorThrown);

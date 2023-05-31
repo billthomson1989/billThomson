@@ -120,7 +120,7 @@
             <div class="tableHolder">
                 <div class="tableFixHead">
                     <table class="table-striped" id="sqlTable">
-                        <thead class="tableHead">
+                        <thead class="tableHead" class="initiallyHidden">
   <tr>
     <th scope="col" class="personnel col-12 col-sm-6 col-md-4 col-lg-2" id="lastName">Last Name</th>
     <th scope="col" class="personnel col-12 col-sm-6 col-md-4 col-lg-2" id="firstName">First Name</th>
@@ -134,7 +134,7 @@
 </thead>
 
  
-                        <tbody id="mainTable">
+                        <tbody id="mainTable" class="initiallyHidden">
                             <!-- The table rows will be generated with the same responsive classes applied to the data cells. -->
                         </tbody>
                     </table>
@@ -781,29 +781,41 @@
                     </div>
                 </form>
 
-                <!-- Delete Location Modal -->
-                <form id="delLocForm">
-                    <div class="modal fade" id="locationDeleteModal" tabindex="-1" aria-labelledby="locationDeleteModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
+                <div class="modal fade" id="deleteLocConfirmWithDepartments" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="locationDeleteModalLabel"><i class="fas fa-exclamation-triangle"></i> Delete Location</h5>
+                                <h5 class="modal-title">Warning</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body delete">
-                                
-                                <h3>You are about to delete: <br></h3>
-                                <h2 id="delLocName"></h2>
-        
+                            <div class="modal-body">
+                                <p>There are <span id="delLocCount"></span> departments in the <span id="delLocName"></span> location. You cannot delete a location that contains departments.</p>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel <i class="fas fa-ban"></i></button>
-                                <button type="submit" class="btn btn-danger" data-bs-dismiss="modal" id="delLocConfirm">Delete <i class="fas fa-trash-alt"></i></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                         </div>
+                    </div>
+                </div>
+                
+                <div class="modal fade" id="locationDeleteModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirm Delete</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete the <span id="delLocNameConfirm"></span> location?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" id="delLocConfirm">Delete</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
                         </div>
                     </div>
-                </form>
+                </div>
+                
 
                 <!-- Add Location Modal -->
                 <form id="addLocForm">
