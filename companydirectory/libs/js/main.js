@@ -195,36 +195,6 @@ function updateUserList() {
     });
 
     // Confirm Edit User -> PHP Routine
-    $("#editUserForm").submit(function(e) {
-
-        e.preventDefault();
-        e.stopPropagation();
-
-        $.ajax({
-            type: 'POST',
-            url: "../companydirectory/libs/php/updateUser.php",
-            data: {
-                firstName: $('#edit_user_firstName').val(),
-                lastName: $('#edit_user_lastName').val(),
-                email: $('#edit_user_email').val(),
-                jobTitle: $('#edit_user_jobTitle').val(),
-                departmentID: $('#edit_user_department').val(),
-                id: $("#editUserConfirm").attr("userID")
-            },
-            dataType: 'json',
-            async: false,
-            success: function(results) {
-                updateUserList();
-            },
-
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.log(errorThrown);
-            }
-        }) 
-        
-    });
-
-    // Confirm Edit User -> PHP Routine
 $("#editUserForm").submit(function(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -232,18 +202,25 @@ $("#editUserForm").submit(function(e) {
     $.ajax({
         type: 'POST',
         url: "../companydirectory/libs/php/updateUser.php",
-        data: $(this).serialize(),
+        data: {
+            firstName: $('#edit_user_firstName').val(),
+            lastName: $('#edit_user_lastName').val(),
+            email: $('#edit_user_email').val(),
+            jobTitle: $('#edit_user_jobTitle').val(),
+            departmentID: $('#edit_user_department').val(),
+            id: $("#editUserConfirm").attr("userID")
+        },
         dataType: 'json',
         async: false,
         success: function(results) {
             const userID = $("#editUserConfirm").attr("userID");
             // Update edited user in the table
-            $(`#${userID} td:nth-child(2)`).text($('#edit_user_firstName').val());
-            $(`#${userID} td:nth-child(3)`).text($('#edit_user_lastName').val());
-            $(`#${userID} td:nth-child(4)`).text($('#edit_user_email').val());
-            $(`#${userID} td:nth-child(5)`).text($('#edit_user_jobTitle').val());
-            $(`#${userID} td:nth-child(6)`).text($('#edit_user_department option:selected').text());
-            $(`#${userID} td:nth-child(7)`).text($('#edit_user_location').text());
+            $(`#${userID} td:nth-child(1)`).text($('#edit_user_lastName').val()); // Update last name in the first column
+            $(`#${userID} td:nth-child(2)`).text($('#edit_user_firstName').val()); // Update first name in the second column
+            $(`#${userID} td:nth-child(3)`).text($('#edit_user_email').val());
+            $(`#${userID} td:nth-child(4)`).text($('#edit_user_jobTitle').val());
+            $(`#${userID} td:nth-child(5)`).text($('#edit_user_department option:selected').text());
+            $(`#${userID} td:nth-child(6)`).text($('#edit_user_location').text());
             $("#userEditModal").modal('hide');
             $('.modal-backdrop').hide(); // Hide the grey overlay.
             // Update the user list with the updated data
@@ -253,7 +230,7 @@ $("#editUserForm").submit(function(e) {
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(errorThrown);
         }
-    })
+    });
 });
 
 
