@@ -9,6 +9,10 @@ let jobTitle_toggle = true;
 let department_toggle = true;
 let location_toggle = true;
 
+toastr.options = {
+    "preventDuplicates": true
+  };
+
 $(window).on('load', function(){
     $('#preloader').fadeOut('slow', function() {
         $(this).remove();
@@ -99,34 +103,33 @@ function updateUserList() {
         
         // Delete User
     $("#delete").click(function() {
-
         $("#userDeleteModal").modal('show');
         $('#deleteConfirm').html(`${$('#userSelectModalLabel').html()}<br>`);
+    })
 
-        $(`#delUserConfirm`).on('click', event => {
-            var userID = $('#user_id').val();
+    $(`#delUserConfirm`).on('click', event => {
+        var userID = $('#user_id').val();
 
-            $.ajax({
-                type: 'POST',
-                url: "./libs/php/deleteUserByID.php",
-                data: {
-                    id: userID,
-                },
-                dataType: 'json',
-                async: false,
-                success: function(results) {
-                    // Remove deleted user from the table
-                    updateUserList();
-                    $(`#${userID}`).remove();
-                    $("#userDeleteModal").modal('hide');
-                    $('#deleteConfirm').html("");
-                    toastr.success('Deletion Successful!');
-                },
+        $.ajax({
+            type: 'POST',
+            url: "./libs/php/deleteUserByID.php",
+            data: {
+                id: userID,
+            },
+            dataType: 'json',
+            async: false,
+            success: function(results) {
+                // Remove deleted user from the table
+                updateUserList();
+                $(`#${userID}`).remove();
+                $("#userDeleteModal").modal('hide');
+                $('#deleteConfirm').html("");
+                toastr.success('Deletion Successful!');
+            },
 
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.log(errorThrown);
-                }
-            })
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log(errorThrown);
+            }
         })
     })
 
@@ -1006,7 +1009,9 @@ function updateTableHeaders(tab) {
     });
 
     // Fade in the visible headers
-    $("#sqlTable thead").removeClass('initiallyHidden').fadeIn('slow');
+    setTimeout(function() {
+        $("#sqlTable thead").removeClass('initiallyHidden').fadeIn('slow');
+    }, 200);
 
    // Override display property for large screens for the department and location tabs
 if (tab === "department") {
