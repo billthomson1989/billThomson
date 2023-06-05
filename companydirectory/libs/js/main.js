@@ -1028,14 +1028,29 @@ if (tab === "department") {
       // Removed the line that toggles the "edit" header visibility
   }
       
-      // Add event listeners for tab clicks
+  $(document).ready(function() {
+    // Simulate a click on the personnel tab
+    $("#personnel-tab").click();
+
+    // Add the 'active-tab' class to the personnel tab
+    $("#personnel-tab").addClass('active-tab');
+});
+
+// Add event listeners for tab clicks
 $("#personnel-tab").on("click", function () {
     // Hide the table data and headers
     $('#mainTable').hide();
     $("#sqlTable thead").hide();
 
+    // Update the headers
     updateTableHeaders("personnel");
+
+    // Fetch the data
     getAllUsers();
+
+    // Adjust the active tab
+    $(".nav-link.tab-custom").removeClass('active-tab'); // Remove the active-tab class from all tabs
+    $(this).addClass('active-tab'); // Add the active-tab class to the clicked tab
 });
 
 $("#department-tab").on("click", function () {
@@ -1045,6 +1060,10 @@ $("#department-tab").on("click", function () {
 
     updateTableHeaders("department");
     getDepartmentData(); 
+
+    // Adjust the active tab
+    $(".nav-link.tab-custom").removeClass('active-tab'); // Remove the active-tab class from all tabs
+    $(this).addClass('active-tab'); // Add the active-tab class to the clicked tab
 });
 
 $("#location-tab").on("click", function () {
@@ -1054,6 +1073,10 @@ $("#location-tab").on("click", function () {
 
     updateTableHeaders("location");
     getLocationData();
+
+    // Adjust the active tab
+    $(".nav-link.tab-custom").removeClass('active-tab'); // Remove the active-tab class from all tabs
+    $(this).addClass('active-tab'); // Add the active-tab class to the clicked tab
 });
       
       

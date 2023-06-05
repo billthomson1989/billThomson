@@ -149,23 +149,34 @@ th {
 
 .nav-link.tab-custom {
     border-radius: 15px;  /* Adjust this value as needed */
-    background-color: #f8f9fa;  /* This is Bootstrap's light gray background color, adjust as needed */
+    background-color: #e2e6eae2;  /* This is Bootstrap's light gray background color, adjust as needed */
     border: none;  /* Removes the default border */
     transition: background-color 0.3s ease;  /* Smooth transition on hover */
+    color: #000;  /* Adjust text color as needed */
 }
 
 .nav-link.tab-custom:hover,
 .nav-link.tab-custom:focus,
 .nav-link.tab-custom:active,
 .nav-link.tab-custom.show {
-    background-color: #e2e6ea;  /* A darker gray, adjust as needed */
+    background-color: #c9cbcde2;  /* A darker gray, adjust as needed */
     color: #000;  /* Adjust text color as needed */
 }
 
+.nav-link.tab-custom.active-tab {
+    background-color: #c9cbcde2;
+    color: #000;
+}
 
 .tableRow:hover {
     cursor: pointer;
     background-color: antiquewhite !important;
+}
+
+.nav-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 
@@ -182,14 +193,19 @@ th {
 
 #searchSelect{
     background-color: whitesmoke;
+    padding-left: 1.5rem;
 }
 
 #search:hover{
     cursor: pointer;
 }
 
+#search {
+padding-right: 1.2rem;
+}
+
 .reset{
-    padding-top: 0.4%
+    padding-top: 0.4%;
 }
 
 
@@ -267,6 +283,15 @@ th {
       flex-direction: column;
       align-content: space-around;
     }
+
+    .nav {
+        display: flex;
+        flex-wrap: wrap;
+        padding-left: 70px;
+        padding-right: 90px;
+        margin-bottom: 0;
+        list-style: none;
+    }
     
     }
 
@@ -329,7 +354,7 @@ th {
 
   .col-6 {
     flex: 0 0 auto;
-    width: 200px;
+    width: auto;
   }
 
   .col {
