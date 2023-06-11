@@ -31,12 +31,7 @@
     <body>
         <main>
             <div id="preloader"></div>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col" id="title">
-                        <h1 id="titleText">Company Directory</h1>
-                    </div>
-                </div>
+            
 
                  <!-- Search Bar -->
 <div class="row justify-content-center mt-3">
@@ -52,39 +47,23 @@
             </select>
             <input id="searchField" name="text" type="text" placeholder="Search.." class="form-control" required>
             <div class="input-group-append">
-                <button id="resetBtn" type="button" class="btn btn-secondary" style="visibility: hidden;"><i class="fas fa-undo"></i></button>
                 <div class="input-group-text" id="search">
                     <i class="fa fa-search"></i>
                 </div>
+                <button id="resetBtn" type="button" class="btn btn-secondary" style="visibility: hidden;"><i class="fas fa-undo"></i></button>
             </div>
         </div>
     </div>
 </div>
 
-
-            
-
                <!-- Add Staff, Departments, and Locations Buttons -->
-<div class="row justify-content-center mt-3">
-    <div class="col-6 col-sm-4 col-md-2 mb-3">
-        <button type="button" id="addUser" class="btn btn-primary btn-block custom-btn" data-bs-toggle="modal" data-bs-target="#addUserModal">
-            <i class="fas fa-user-plus"></i>
-            <br>Add Personnel
-        </button>
-    </div>
-    <div class="col-6 col-sm-4 col-md-2 mb-3">
-        <button type="button" id="departments" class="btn btn-primary btn-block custom-btn" data-bs-toggle="modal" data-bs-target="#departmentsModal">
-            <i class="fas fa-building"></i>
-            <br>Add Departments
-        </button>
-    </div>
-    <div class="col-6 col-sm-4 col-md-2 mb-3">
-        <button type="button" id="locations" class="btn btn-primary btn-block custom-btn" data-bs-toggle="modal" data-bs-target="#locationsModal">
-            <i class="fas fa-map-marker-alt"></i>
-            <br>Add Locations
-        </button>
-    </div>
+<div class="col-6 col-sm-4 col-md-2 mb-3">
+    <button type="button" id="addButton" class="btn btn-primary btn-block custom-btn">
+        <i class="fas fa-plus"></i>
+        <br>Add
+    </button>
 </div>
+
 
 <!--  Staff, Departments, and Locations Tab Content -->
 <ul class="nav nav-tabs nav-fill flex-sm-row" id="myTab" role="tablist">
@@ -120,7 +99,7 @@
             <div class="tableHolder">
                 <div class="tableFixHead">
                     <table class="table-striped" id="sqlTable">
-                        <thead class="tableHead" class="initiallyHidden">
+                        <thead class="tableHead" >
   <tr>
     <th scope="col" class="personnel col-12 col-sm-6 col-md-4 col-lg-2" id="lastName">Last Name</th>
     <th scope="col" class="personnel col-12 col-sm-6 col-md-4 col-lg-2" id="firstName">First Name</th>
@@ -134,7 +113,7 @@
 </thead>
 
  
-                        <tbody id="mainTable" class="initiallyHidden">
+                        <tbody id="mainTable" >
                             <!-- The table rows will be generated with the same responsive classes applied to the data cells. -->
                         </tbody>
                     </table>

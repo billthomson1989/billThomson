@@ -1028,29 +1028,14 @@ if (tab === "department") {
       // Removed the line that toggles the "edit" header visibility
   }
       
-  $(document).ready(function() {
-    // Simulate a click on the personnel tab
-    $("#personnel-tab").click();
-
-    // Add the 'active-tab' class to the personnel tab
-    $("#personnel-tab").addClass('active-tab');
-});
-
-// Add event listeners for tab clicks
+      // Add event listeners for tab clicks
 $("#personnel-tab").on("click", function () {
     // Hide the table data and headers
     $('#mainTable').hide();
     $("#sqlTable thead").hide();
 
-    // Update the headers
     updateTableHeaders("personnel");
-
-    // Fetch the data
     getAllUsers();
-
-    // Adjust the active tab
-    $(".nav-link.tab-custom").removeClass('active-tab'); // Remove the active-tab class from all tabs
-    $(this).addClass('active-tab'); // Add the active-tab class to the clicked tab
 });
 
 $("#department-tab").on("click", function () {
@@ -1060,10 +1045,6 @@ $("#department-tab").on("click", function () {
 
     updateTableHeaders("department");
     getDepartmentData(); 
-
-    // Adjust the active tab
-    $(".nav-link.tab-custom").removeClass('active-tab'); // Remove the active-tab class from all tabs
-    $(this).addClass('active-tab'); // Add the active-tab class to the clicked tab
 });
 
 $("#location-tab").on("click", function () {
@@ -1073,10 +1054,6 @@ $("#location-tab").on("click", function () {
 
     updateTableHeaders("location");
     getLocationData();
-
-    // Adjust the active tab
-    $(".nav-link.tab-custom").removeClass('active-tab'); // Remove the active-tab class from all tabs
-    $(this).addClass('active-tab'); // Add the active-tab class to the clicked tab
 });
       
       
@@ -1473,4 +1450,121 @@ $(document).on('click', '#delLocConfirm', function() {
             console.log(errorThrown);
         }
     });
+});
+
+
+// Declare currentDepartments in the global scope
+var currentDepartments; 
+
+document.getElementById('addButton').addEventListener('click', function () {
+    var activeTab = document.querySelector('.nav-tabs .active'); // This gets the currently active tab
+
+    function updateLocation() {
+        let locationSelectionHTML = "";
+        let locationID = document.getElementById('add_user_department').value;
+
+        $.ajax({
+            type: 'GET',
+            url: '../companydirectory/libs/php/getAllDepartments.php',
+            dataType: 'json',
+            async: false,
+            success: function(result) {
+                currentDepartments = result.data;
+
+                for(let i=0; i < currentDepartments.length; i++){
+                    if (currentDepartments[i]['id'] == locationID){
+                        locationSelectionHTML = `${currentDepartments[i]['location']}`
+                    }
+                }
+
+                $('#add_user_location').html(locationSelectionHTML);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log(errorThrown);
+            }
+        });
+    }
+
+    if (activeTab.id === 'personnel-tab') {
+        var addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'), {});
+
+        // When the modal is shown, populate the departments dropdown
+        $('#addUserModal').on('shown.bs.modal', function () {
+            // Fetch and populate the departments before showing the modal
+            $('#add_user_department').empty(); // Clear existing options
+
+            $.ajax({
+                type: 'GET',
+                url: '../companydirectory/libs/php/getAllDepartments.php',
+                dataType: 'json',
+                async: false,
+                success: function(result) {
+                    currentDepartments = result.data;
+
+                    for(var i = 0; i < currentDepartments.length; i++) {
+                        var option = $('<option/>');
+                        option.attr('value', currentDepartments[i].id);
+                        option.text(currentDepartments[i].department);
+                        $('#add_user_department').append(option);
+                    }
+                    
+                    // Call update location function here after departments have been populated.
+                    updateLocation();
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                }
+            });
+        });
+
+        addUserModal.show();
+    } else if (activeTab.id === 'department-tab') {
+
+        var addDepartmentModal = new bootstrap.Modal(document.getElementById('addDepartmentModal'), {});
+        
+        // When the modal is shown, populate the locations dropdown
+        $('#addDepartmentModal').on('shown.bs.modal', function () {
+            // Fetch and populate the locations before showing the modal
+            $('#newDepLocation').empty(); // Clear existing options
+
+            $.ajax({
+                type: 'GET',
+                url: '../companydirectory/libs/php/getLocations.php',
+                dataType: 'json',
+                async: false,
+                success: function(result) {
+                    var locations = result.data;
+
+                    for(var i = 0; i < locations.length; i++) {
+                        var option = $('<option/>');
+                        option.attr('value', locations[i].id);
+                        option.text(locations[i].location); // 'location' is the name of the property
+                        $('#newDepLocation').append(option);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                }
+            });
+        });
+
+        addDepartmentModal.show();
+    } else if (activeTab.id === 'location-tab') {
+        var addLocationModal = new bootstrap.Modal(document.getElementById('addLocationModal'), {});
+        addLocationModal.show();
+    }
+
+    $('#add_user_department').change(function () {
+        updateLocation();
+    });
+});
+
+$("#newUserForm").submit(function(e) {
+    e.preventDefault();
+
+    // Store department ID of the new user
+    let newUserDepartmentID = $("#add_user_department").val();
+
+    // Use find() method to find the department object corresponding to the selected department ID
+    let newUserLocation = currentDepartments.find(dept => dept.id === newUserDepartmentID).location;
 });

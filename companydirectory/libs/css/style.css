@@ -1,7 +1,3 @@
-html, body {
-    height: 100%;
-    overflow: auto;
-}
 
 
 #title {    
@@ -440,8 +436,5 @@ th {
     }
     }
 
-    .row>* {
-        padding-right: calc(var(--bs-gutter-x) * .0);
-        padding-left: calc(var(--bs-gutter-x) * .0);
-    }
+    
     
