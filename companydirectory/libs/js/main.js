@@ -872,24 +872,23 @@ function generateSearchResultsUsers(results){
   // Update Main HTML Table
 for (i = 0; i < list.length; i++) {
     search_html_table += `<tr class="tableRow" id="${list[i].id}">
-        <td scope="row" class="col-12 col-sm-6 col-md-2">${list[i].lastName}</td>
-        <td scope="row" class="col-12 col-sm-6 col-md-2">${list[i].firstName}</td>
-        <td scope="row" class="d-none d-md-table-cell">${list[i].email}</td>
-        <td scope="row" class="d-none d-xl-table-cell">${list[i].jobTitle}</td>
-        <td scope="row" class="d-none d-xl-table-cell">${list[i].department}</td>
-        <td scope="row" class="d-none d-xl-table-cell">${list[i].location}</td>
-        <td><button class="editBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button>
-        </td>
-        <td><button class="deleteUserBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
+        <td scope="row" class="col-12 col-sm-6 col-md-2 text-center">${list[i].lastName}</td>
+        <td scope="row" class="col-12 col-sm-6 col-md-2 text-center">${list[i].firstName}</td>
+        <td scope="row" class="d-none d-md-table-cell text-center">${list[i].email}</td>
+        <td scope="row" class="d-none d-xl-table-cell text-center">${list[i].jobTitle}</td>
+        <td scope="row" class="d-none d-xl-table-cell text-center">${list[i].department}</td>
+        <td scope="row" class="d-none d-xl-table-cell text-center">${list[i].location}</td>
+        <td class="text-center"><button class="editBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
+        <td class="text-center"><button class="deleteUserBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
         </tr>`;
 }
 
-    if (search_html_table === "") {
-        toastr.info('No Search Results Found');
-    } else {
-        $('#sqlTable').find('tbody').html(`${search_html_table}`);
-        toastr.success('Located Successfully!');
-    }
+if (search_html_table === "") {
+    toastr.info('No Search Results Found');
+} else {
+    $('#sqlTable').find('tbody').html(`${search_html_table}`);
+    toastr.success('Located Successfully!');
+}
 }
 
 function handleScreenOrientation() {
@@ -961,15 +960,15 @@ function getAllUsers() {
         let data = results["data"];
         let usersArray = data.map(item => item);
         let html_table = usersArray.map(user => `<tr class="tableRow" id="${user.id}">
-                <td scope="row" class="col-12 col-sm-6 col-md-4 col-lg-2">${user.lastName}</td>
-                <td scope="row" class="col-12 col-sm-6 col-md-4 col-lg-2">${user.firstName}</td>
-                <td scope="row" class="d-none d-md-table-cell col-md-4 col-lg-2">${user.email}</td>
-                <td scope="row" class="d-none d-lg-table-cell col-lg-2">${user.jobTitle}</td>
-                <td scope="row" class="d-none d-lg-table-cell col-lg-2">${user.department}</td>
-                <td scope="row" class="d-none d-lg-table-cell col-lg-2">${user.location}</td>
-                <td><button class="editUserBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button>
+                <td scope="row" class="text-center col-12 col-sm-6 col-md-4 col-lg-2">${user.lastName}</td>
+                <td scope="row" class="text-center col-12 col-sm-6 col-md-4 col-lg-2">${user.firstName}</td>
+                <td scope="row" class="text-center d-none d-md-table-cell col-md-4 col-lg-2">${user.email}</td>
+                <td scope="row" class="text-center d-none d-lg-table-cell col-lg-2">${user.jobTitle}</td>
+                <td scope="row" class="text-center d-none d-lg-table-cell col-lg-2">${user.department}</td>
+                <td scope="row" class="text-center d-none d-lg-table-cell col-lg-2">${user.location}</td>
+                <td class="text-center"><button class="editUserBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button>
                 </td>
-                <td><button class="deleteUserBtn btn btn-danger"><i class="fa fa-trash"></i></button>
+                <td class="text-center"><button class="deleteUserBtn btn btn-danger"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>`).join('');
         $('#mainTable').html(html_table);
@@ -1000,13 +999,16 @@ function updateTableHeaders(tab) {
       headers = locationHeaders;
     }
   
-    // Reset classes for all headers
-    $("#lastName").attr("class", "personnel col-12 col-sm-6 col-md-4 col-lg-2");
-    $("#firstName").attr("class", "personnel col-12 col-sm-6 col-md-4 col-lg-2");
-    $("#email").attr("class", "personnel d-none d-md-table-cell col-md-4 col-lg-2");
-    $("#jobTitle").attr("class", "personnel d-none d-lg-table-cell col-lg-2");
-    $("#departmentHeader").attr("class", "department location d-none d-lg-table-cell col-lg-2");
-    $("#locationHeader").attr("class", "personnel department location d-none d-lg-table-cell col-lg-2");
+   // Reset classes for all headers
+$("#lastName").attr("class", "personnel col-12 col-sm-6 col-md-4 col-lg-2 text-center");
+$("#firstName").attr("class", "personnel col-12 col-sm-6 col-md-4 col-lg-2 text-center");
+$("#email").attr("class", "personnel d-none d-md-table-cell col-md-4 col-lg-2 text-center");
+$("#jobTitle").attr("class", "personnel d-none d-lg-table-cell col-lg-2 text-center");
+$("#departmentHeader").attr("class", "department location d-none d-lg-table-cell col-lg-2 text-center");
+$("#locationHeader").attr("class", "personnel department location d-none d-lg-table-cell col-lg-2 text-center");
+$("#editHeader").attr("class", "personnel text-center");
+$("#deleteHeader").attr("class", "personnel text-center");
+    
     
     
   
@@ -1082,10 +1084,10 @@ $("#location-tab").on("click", function () {
     
                 data.forEach((department) => {
                     html_table += `<tr class="depTableRow" title="${department.department}" departmentID="${department.id}" location="${department.locationID}" users="${department.users}">
-                        <td>${department.department}</td>
-                        <td>${department.location}</td>
-                        <td><button class="editDepartmentBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
-                        <td><button class="deletDepBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
+                    <td class="text-center">${department.department}</td>
+                    <td class="text-center">${department.location}</td>
+                    <td class="text-center"><button class="editDepartmentBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
+                    <td class="text-center"><button class="deletDepBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
                     </tr>`;
                 });
     
@@ -1305,9 +1307,9 @@ function getLocationData() {
 
             data.forEach((location) => {
                 html_table += `<tr>
-                    <td>${location.location}</td>
-                    <td><button class="editLocationBtn locationEdit btn btn-warning" locationName="${location.location}" locationID="${location.id}" departments="${location.departments}"><i class="fas fa-pencil-alt"></i></button></td>
-                    <td><button class="deleteLocBtn locationDelete btn btn-danger" locationName="${location.location}" locationID="${location.id}" departments="${location.departments}"><i class="fa fa-trash"></i></button></td>
+                    <td class="text-center">${location.location}</td>
+                    <td class="text-center"><button class="editLocationBtn locationEdit btn btn-warning" locationName="${location.location}" locationID="${location.id}" departments="${location.departments}"><i class="fas fa-pencil-alt"></i></button></td>
+                    <td class="text-center"><button class="deleteLocBtn locationDelete btn btn-danger" locationName="${location.location}" locationID="${location.id}" departments="${location.departments}"><i class="fa fa-trash"></i></button></td>
                 </tr>`;
             });
 
