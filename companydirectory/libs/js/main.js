@@ -829,6 +829,9 @@ $("#search").click(function() {
     $("#resetBtn").attr("style", "visibility: visible");
     var option = $('#searchSelect').val();
 
+    // Select the 'personnel' tab
+    $("#personnel-tab").click();
+
     if (option == 'firstName') {
         makeAjaxRequest("../companydirectory/libs/php/search_firstName.php");
     } else if (option == 'lastName') {
