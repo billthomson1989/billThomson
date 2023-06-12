@@ -11,21 +11,14 @@
     margin: 1.5%;
 }
 
-
-.btn-primary {
-    padding: none;
-    color: #fff;
-    background-color: silver!important;
-    border-color: gray!important;
-    margin-right: 10px;
-}
-
 .btn-secondary {
     padding: none;
     color: #fff;
-    background-color: silver!important;
-    border-color: gray!important;
-    margin-left: 10px;
+}
+
+.mb-3 {
+    margin-bottom: 1rem!important;
+    margin-top: 1rem!important;
 }
 
 .searchBar {
@@ -145,40 +138,6 @@ th {
     color: white;
 }
 
-.nav-link.tab-custom {
-    border-radius: 15px;  /* Adjust this value as needed */
-    background-color: #e2e6eae2;  /* This is Bootstrap's light gray background color, adjust as needed */
-    border: none;  /* Removes the default border */
-    transition: background-color 0.3s ease;  /* Smooth transition on hover */
-    color: #000;  /* Adjust text color as needed */
-}
-
-.nav-link.tab-custom:hover,
-.nav-link.tab-custom:focus,
-.nav-link.tab-custom:active,
-.nav-link.tab-custom.show {
-    background-color: #c9cbcde2;  /* A darker gray, adjust as needed */
-    color: #000;  /* Adjust text color as needed */
-}
-
-.nav-link.tab-custom.active-tab {
-    background-color: #c9cbcde2;
-    color: #000;
-}
-
-.tableRow:hover {
-    cursor: pointer;
-    background-color: antiquewhite !important;
-}
-
-.nav-link {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-
-
 .tableHolder {
     width: 90%;
     margin: auto;
@@ -186,8 +145,6 @@ th {
     border-style: double;
     border-color: black;
 }
-
-
 
 #searchSelect{
     background-color: whitesmoke;
@@ -212,11 +169,6 @@ th {
     background-color: whitesmoke !important;
 }
 
-.delete {
-    text-align: center;
-    color: red;
-}
-
 .tableHead{
     background-color: gray;
     color: white;
@@ -227,10 +179,6 @@ th {
     background-color: antiquewhite !important;
 }
 
-.deleteBtn {
-    margin: auto;
-    text-align: center;
-}
 
 .modalIcon{
     width: 75%;
@@ -242,10 +190,6 @@ th {
 
 .submitBtn{
     margin: auto !important;
-}
-
-.btn-success {
-    width: 100px;
 }
 
 .modal-backdrop {
@@ -372,6 +316,11 @@ th {
     flex: 0 0 auto;
     width: auto;
   }
+
+  .col-12 {
+    flex: 0 0 auto;
+    width: 0%;
+}
 
   .col {
     flex: none;

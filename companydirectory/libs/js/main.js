@@ -306,8 +306,9 @@ $("#newUserForm").submit(function(e) {
     <td>${newUserJobTitle}</td>
     <td>${newUserDepartmentName}</td>
     <td>${newUserLocation}</td>
-    <td><button class="editUserBtn" style="background-color: gold;"><i class="fas fa-pencil-alt"></i></button></td>
-    <td><button class="deleteUserBtn" style="background-color: red;"><i class="fa-regular fa-trash-can"></i></button></td>
+    <td><button class="editUserBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
+    <td><button class="deleteUserBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
+
 </tr>`;
             $("#mainTable").append(html_row);
         
@@ -516,8 +517,9 @@ $("#addDepForm").submit(function(e) {
             let html_row = `<tr class="depTableRow" title="${newDepName}" departmentID="${result.id}" location="${newLocId}" users="0">
                 <td>${newDepName}</td>
                 <td>${newLocName}</td>
-                <td><button class="editDepartmentBtn" style="background-color: gold;"><i class="fas fa-pencil-alt"></i></button></td>
-                <td><button class="deletDepBtn" style="background-color: red;"><i class="fa-regular fa-trash-can"></i></button></td>
+                <td><button class="editDepartmentBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
+                <td><button class="deleteDepBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
+
             </tr>`;
             $("#mainTable").append(html_row);
 
@@ -782,8 +784,10 @@ $("#addLocForm").submit(function(e) {
         success: function(result) {
             let html_row = `<tr>
                 <td>${newLocName}</td>
-                <td><button class="editLocationBtn locationEdit" style="background-color: gold;" locationName="${newLocName}" locationID="${result.id}" departments="0"><i class="fas fa-pencil-alt"></i></button></td>
-                <td><button class="deleteLocBtn locationDelete" style="background-color: red;" locationName="${newLocName}" locationID="${result.id}" departments="0"><i class="fa-regular fa-trash-can"></i></button></td>
+                <td><button class="editLocationBtn locationEdit btn btn-warning" locationName="${newLocName}" locationID="${result.id}" departments="0">
+                <i class="fas fa-pencil-alt"></i></button></td>
+                <td><button class="deleteLocBtn locationDelete btn btn-danger" locationName="${newLocName}" locationID="${result.id}" departments="0">
+                <i class="fa fa-trash"></i></button></td>
             </tr>`;
             $("#mainTable").append(html_row);
 
@@ -871,9 +875,10 @@ for (i = 0; i < list.length; i++) {
         <td scope="row" class="d-none d-xl-table-cell">${list[i].jobTitle}</td>
         <td scope="row" class="d-none d-xl-table-cell">${list[i].department}</td>
         <td scope="row" class="d-none d-xl-table-cell">${list[i].location}</td>
-        <td><button class="editBtn" style="background-color: gold;"><i class="fas fa-pencil-alt"></i></button></td>
-        <td><button class="deleteUserBtn" style="background-color: red;"><i class="fa-regular fa-trash-can"></i></button></td>
-    </tr>`;
+        <td><button class="editBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button>
+        </td>
+        <td><button class="deleteUserBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
+        </tr>`;
 }
 
     if (search_html_table === "") {
@@ -959,8 +964,10 @@ function getAllUsers() {
                 <td scope="row" class="d-none d-lg-table-cell col-lg-2">${user.jobTitle}</td>
                 <td scope="row" class="d-none d-lg-table-cell col-lg-2">${user.department}</td>
                 <td scope="row" class="d-none d-lg-table-cell col-lg-2">${user.location}</td>
-                <td><button class="editUserBtn" style="background-color: gold;"><i class="fas fa-pencil-alt"></i></button></td>
-                <td><button class="deleteUserBtn" style="background-color: red;"><i class="fa-regular fa-trash-can"></i></button></td>
+                <td><button class="editUserBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button>
+                </td>
+                <td><button class="deleteUserBtn btn btn-danger"><i class="fa fa-trash"></i></button>
+                </td>
             </tr>`).join('');
         $('#mainTable').html(html_table);
         $('#mainTable').removeClass('initiallyHidden').fadeIn('slow');
@@ -1074,8 +1081,8 @@ $("#location-tab").on("click", function () {
                     html_table += `<tr class="depTableRow" title="${department.department}" departmentID="${department.id}" location="${department.locationID}" users="${department.users}">
                         <td>${department.department}</td>
                         <td>${department.location}</td>
-                        <td><button class="editDepartmentBtn" style="background-color: gold;"><i class="fas fa-pencil-alt"></i></button></td>
-                        <td><button class="deletDepBtn" style="background-color: red;"><i class="fa-regular fa-trash-can"></i></button></td>
+                        <td><button class="editDepartmentBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
+                        <td><button class="deletDepBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
                     </tr>`;
                 });
     
@@ -1296,8 +1303,8 @@ function getLocationData() {
             data.forEach((location) => {
                 html_table += `<tr>
                     <td>${location.location}</td>
-                    <td><button class="editLocationBtn locationEdit" style="background-color: gold;" locationName="${location.location}" locationID="${location.id}" departments="${location.departments}"><i class="fas fa-pencil-alt"></i></button></td>
-                    <td><button class="deleteLocBtn locationDelete" style="background-color: red;" locationName="${location.location}" locationID="${location.id}" departments="${location.departments}"><i class="fa-regular fa-trash-can"></i></button></td>
+                    <td><button class="editLocationBtn locationEdit btn btn-warning" locationName="${location.location}" locationID="${location.id}" departments="${location.departments}"><i class="fas fa-pencil-alt"></i></button></td>
+                    <td><button class="deleteLocBtn locationDelete btn btn-danger" locationName="${location.location}" locationID="${location.id}" departments="${location.departments}"><i class="fa fa-trash"></i></button></td>
                 </tr>`;
             });
 

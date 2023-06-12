@@ -57,12 +57,11 @@
 </div>
 
                <!-- Add Staff, Departments, and Locations Buttons -->
-<div class="col-6 col-sm-4 col-md-2 mb-3">
-    <button type="button" id="addButton" class="btn btn-primary btn-block custom-btn">
-        <i class="fas fa-plus"></i>
-        <br>Add
+<div class="d-flex justify-content-center mb-3">
+    <button type="button" id="addButton" class="btn btn-secondary">Add <i class="fas fa-plus"></i>
     </button>
 </div>
+
 
 
 <!--  Staff, Departments, and Locations Tab Content -->
@@ -481,7 +480,7 @@
                             <div class="modal-footer">
                                 <div class="form-group row submitBtn">
                                     <div class="col-8">
-                                        <button id="newUserConfirm" name="newUserConfirm" type="submit" class="btn btn-success"><i class="fas fa-user-plus"></i><br>Add +</button>
+                                        <button id="newUserConfirm" name="newUserConfirm" type="submit" class="btn btn-success"><i class="fas fa-plus"></i>User</button>
                                     </div>
                                 </div>
                             </div>
@@ -515,7 +514,7 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="modal-footer">
+                        <div class="modal-footer d-flex justify-content-center">
                             <div class="form-group row submitBtn">
                                 <div class="col-8">
                                     <button id="addDepartment" name="addDepartment" type="submit" class="btn btn-success" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#addDepartmentModal"><i class="fas fa-building"></i><br> Add Department </button>
@@ -572,7 +571,7 @@
                             <div class="modal-footer">
                                 <div class="form-group row submitBtn">
                                     <div class="col-8">
-                                        <button id="newDepConfirm" name="newDepConfirm" type="submit" class="btn btn-success"><i class="fas fa-user-plus"></i><br> Add Department </button>
+                                        <button id="newDepConfirm" name="newDepConfirm" type="submit" class="btn btn-success"><i class="fas fa-plus"></i>Department </button>
                                     </div>
                                 </div>
                             </div>
@@ -623,15 +622,11 @@
                                     </div>
                                 </div> 
 
-                                <div class="col-8 deleteBtn" id="deleteDepBtn">
-                                    <button type="button" class="btn btn-danger" id="departmentDelete" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#departmentDeleteModal" data-bs-backdrop="static">Delete Department</button>
-                                </div>
-
                             </div>
 
-                            <div class="modal-footer">
-                                <div class="form-group row submitBtn">
-                                    <div class="col-8 btnAllign">
+                            <div class="modal-footer d-flex justify-content-center">
+                                <div class="form-group row submitBtn d-flex justify-content-center">
+                                    <div class="col-8 btnAllign d-flex justify-content-center">
                                         <button type="button" class="btn btn-secondary cancelBtn" data-bs-dismiss="modal" data-bs-backdrop="static">Cancel <i class="fas fa-ban"></i></button>
                                         <button type="submit" class="btn btn-success" id="editDepConfirm">Confirm <i class="fas fa-check"></i></button>
                                     </div>
@@ -670,7 +665,7 @@
                             <div class="modal-body">
                                 <p>Are you sure you want to delete the <span id="delDepName"></span> department?</p>
                             </div>
-                            <div class="modal-footer">
+                            <div class="modal-footer d-flex justify-content-center">
                                 <button type="button" class="btn btn-danger" id="delDepConfirm">Delete</button>
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                             </div>
@@ -746,8 +741,8 @@
 
                                 </div>
 
-                                <div class="modal-footer">
-                                    <div class="form-group row submitBtn">
+                                <div class="modal-footer d-flex justify-content-center">
+                                    <div class="form-group row submitBtn d-flex justify-content-center">
                                         <div class="col-8 btnAllign">
                                             <button type="button" class="btn btn-secondary cancelBtn" data-bs-dismiss="modal">Cancel <i class="fas fa-ban"></i></button>
                                             <button type="submit" class="btn btn-success" id="editLocConfirm">Confirm <i class="fas fa-check"></i></button>
@@ -787,7 +782,7 @@
                             <div class="modal-body">
                                 <p>Are you sure you want to delete the <span id="delLocNameConfirm"></span> location?</p>
                             </div>
-                            <div class="modal-footer">
+                            <div class="modal-footer d-flex justify-content-center">
                                 <button type="button" class="btn btn-danger" id="delLocConfirm">Delete</button>
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                             </div>
@@ -826,9 +821,9 @@
                             </div>
 
                             <div class="modal-footer">
-                                <div class="form-group row submitBtn">
+                                <div class="form-group row submitBtn d-flex justify-content-center">
                                     <div class="col-8">
-                                        <button id="addLocConfirm" name="addLocConfirm" type="submit" class="btn btn-success"><i class="fas fa-map-marker-alt"></i><br> Add Location </button>
+                                        <button id="addLocConfirm" name="addLocConfirm" type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Location</button>
                                     </div>
                                 </div>
                             </div>
