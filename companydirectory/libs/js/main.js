@@ -59,11 +59,13 @@ function updateUserList() {
 }
     
     // User Modal Behaviour
-$('table').on('click', '.tableRow', function() {
+    $('table').on('click', '.tableRow', function() {
 
     var current_user;
     current_user = this.id
     console.log(current_user)
+
+    $("#userSelectModal").modal('show'); 
 
     // Generate specific user details
     $.ajax({
@@ -80,18 +82,18 @@ $('table').on('click', '.tableRow', function() {
             const data = results["data"]
             const returned_user = data.personnel['0'];
             
-            // Populate the edit modal with user details
-            $('#edit_user_firstName').val(returned_user.firstName);
-            $('#edit_user_lastName').val(returned_user.lastName);
-            $('#edit_user_email').val(returned_user.email);
-            $('#edit_user_jobTitle').val(returned_user.jobTitle);
-            $('#edit_user_department').val(returned_user.department);
-            $('#edit_user_location').val(returned_user.location);
+            // Populate the modal with user details
+            $('#userSelectModalLabel').html(`${returned_user.firstName} ${returned_user.lastName}`);
+            $('#user_id').val(returned_user.id);
+            $('#user_firstName').val(returned_user.firstName);
+            $('#user_lastName').val(returned_user.lastName);
+            $('#user_email').val(returned_user.email);
+            $('#user_jobTitle').val(returned_user.jobTitle);
+            $('#user_department').val(returned_user.department);
+            $('#user_location').val(returned_user.location);
             
             // Set the user ID for the edit button
-            $("#editUserConfirm").attr("userID", returned_user.id);
-            
-            $("#userEditModal").modal('show'); // Show the edit modal
+            $("#edit").attr("userID", returned_user.id);
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(errorThrown);
@@ -133,42 +135,39 @@ $('table').on('click', '.tableRow', function() {
 
     })
 
-    // User Modal Behaviour
-$('table').on('click', '.tableRow', function(event) {
+    // Edit User
+    $("#edit").click(function() {
 
-    var current_user;
-    current_user = $(this).attr('id');
-    console.log(current_user)
+        $("#userEditModal").modal('show');
+        $('.modal-backdrop').show(); // Show the grey overlay.
 
-    $("#editUserModal").modal('show');
+        // Generate specific user details
+        $.ajax({
+            type: 'GET',
+            url: "../companydirectory/libs/php/getPersonnelByID.php",
+            data: {
+                id: $("#edit").attr("userID")
+            },
+            dataType: 'json',
+            async: false,
+            success: function(results) {
 
-    // Generate specific user details
-    $.ajax({
-        type: 'GET',
-        url: "../companydirectory/libs/php/getPersonnelByID.php",
-        data: {
-            id: current_user
-        },
-        dataType: 'json',
-        async: false,
-        success: function(results) {
+                const data = results["data"]
+                const returned_user = data.personnel['0'];
 
-            // Extract user details from the response
-            const data = results["data"]
-            const returned_user = data.personnel['0'];
+                $('#edit_user_firstName').val(returned_user.firstName);
+                $('#edit_user_lastName').val(returned_user.lastName);
+                $('#edit_user_email').val(returned_user.email);
+                $('#edit_user_jobTitle').val(returned_user.jobTitle);
+                $('#edit_user_department').html(returned_user.department);
+                $('#edit_user_location').html(returned_user.location);
+                $("#editUserConfirm").attr("userID", returned_user.id);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log(errorThrown);
+            }
+        })
 
-            $('#edit_user_firstName').val(returned_user.firstName);
-            $('#edit_user_lastName').val(returned_user.lastName);
-            $('#edit_user_email').val(returned_user.email);
-            $('#edit_user_jobTitle').val(returned_user.jobTitle);
-            $('#edit_user_department').html(returned_user.department);
-            $('#edit_user_location').html(returned_user.location);
-            $("#editUserConfirm").attr("userID", returned_user.id);
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log(errorThrown);
-        }
-    });
         getDepartmentsByUser();
 
         let departmentSelection = "";
@@ -301,14 +300,15 @@ $("#newUserForm").submit(function(e) {
             let newUserLocation = currentDepartments.find(dept => dept.id === newUserDepartmentID).location;
         
             let html_row = `<tr>
-    <td class="text-center">${newUserLastName}</td>
-    <td class="text-center">${newUserFirstName}</td>
-    <td class="text-center">${newUserEmail}</td>
-    <td class="text-center">${newUserJobTitle}</td>
-    <td class="text-center">${newUserDepartmentName}</td>
-    <td class="text-center">${newUserLocation}</td>
-    <td class="text-center"><button class="editUserBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
-    <td class="text-center"><button class="deleteUserBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
+    <td>${newUserLastName}</td>
+    <td>${newUserFirstName}</td>
+    <td>${newUserEmail}</td>
+    <td>${newUserJobTitle}</td>
+    <td>${newUserDepartmentName}</td>
+    <td>${newUserLocation}</td>
+    <td><button class="editUserBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
+    <td><button class="deleteUserBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
+
 </tr>`;
             $("#mainTable").append(html_row);
         
@@ -512,15 +512,16 @@ $("#addDepForm").submit(function(e) {
             locationID: newLocId
         },
         dataType: 'json',
-    async: false,
-    success: function(result) {
-        let html_row = `<tr class="depTableRow" title="${newDepName}" departmentID="${result.id}" location="${newLocId}" users="0">
-            <td class="text-center">${newDepName}</td>
-            <td class="text-center">${newLocName}</td>
-            <td class="text-center"><button class="editDepartmentBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
-            <td class="text-center"><button class="deleteDepBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
-        </tr>`;
-        $("#mainTable").append(html_row);
+        async: false,
+        success: function(result) {
+            let html_row = `<tr class="depTableRow" title="${newDepName}" departmentID="${result.id}" location="${newLocId}" users="0">
+                <td>${newDepName}</td>
+                <td>${newLocName}</td>
+                <td><button class="editDepartmentBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
+                <td><button class="deleteDepBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
+
+            </tr>`;
+            $("#mainTable").append(html_row);
 
             // Hide the modal and remove the backdrop
             $('#addDepartmentModal').modal('hide');
@@ -535,6 +536,97 @@ $("#addDepForm").submit(function(e) {
     })
 
 })
+
+    // --------------------------------------------------------- Locations ---------------------------------------------------------
+
+    // Function to update the locations list
+function updateLocationsList() {
+    $.ajax({
+        type: 'GET',
+        url: "../companydirectory/libs/php/getLocations.php",
+        data: {},
+        dataType: 'json',
+        async: false,
+        success: function(results) {
+            let data = results["data"];
+            let locArray = [];
+            let loc_html = ``;
+
+            for(let i=0; i < data.length; i++){
+                locArray.push(data[i]);
+            }
+
+            for(let i=0; i < locArray.length; i++){
+                loc_html += `<tr id="${locArray[i].id}" class=" locationEdit locTableRow" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#locationEditModal" locationName="${locArray[i].location}" locationID="${locArray[i].id}" departments="${locArray[i].departments}"><td scope="row" class="locationHeader">${locArray[i].location}</td></tr>`;
+            }
+
+            $('#locationsList').html(loc_html);
+        },
+
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    });
+}
+
+// Location Modal Behaviour
+$(`#locations`).on('click', event => {
+
+    // Initially update the locations list when the modal is opened
+    updateLocationsList();
+
+
+
+        // Edit Location Modal
+        $(".locationEdit").click(function(){      
+            
+            $('.modal-backdrop').show();
+
+            $('#edit_location_name').val(this.attributes.locationName.value);
+            $('#edit_location_name').attr("locID", this.attributes.locationID.value);
+        
+            if (this.attributes.departments.value == 0){
+                $("#deleteLocBtn").show();
+                $("#locationDelete").attr("locationName",this.attributes.locationName.value);
+                $("#locationDelete").attr("locationID",this.attributes.locationID.value);
+            } else {
+                $("#deleteLocBtn").hide();
+            }
+        
+        });
+
+        // Delete Location -> PHP Routine
+        $("#locationDelete").off("click").on("click", function(){
+            
+            $('#delLocName').html(`${this['attributes']['locationName']['value']}`);
+
+            var locID = this.attributes.locationID.value;
+            
+            $("#delLocForm").submit(function(e) {
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                $.ajax({
+                    type: 'POST',
+                    url: "../companydirectory/libs/php/deleteLocationByID.php",
+                    data: {
+                        locationID: locID,
+                    },
+                    dataType: 'json',
+                    async: false,
+                    success: function(results) {
+                        toastr.success('Deletion Successful!');
+                    },
+            
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                }) 
+            })
+        });
+    });    
+
 
     // --------------------------------------------------------- Locations ---------------------------------------------------------
 
@@ -688,16 +780,16 @@ $("#addLocForm").submit(function(e) {
             name: newLocName,
         },
         dataType: 'json',
-    async: false,
-    success: function(result) {
-        let html_row = `<tr>
-            <td class="text-center">${newLocName}</td>
-            <td class="text-center"><button class="editLocationBtn locationEdit btn btn-warning" locationName="${newLocName}" locationID="${result.id}" departments="0">
-            <i class="fas fa-pencil-alt"></i></button></td>
-            <td class="text-center"><button class="deleteLocBtn locationDelete btn btn-danger" locationName="${newLocName}" locationID="${result.id}" departments="0">
-            <i class="fa fa-trash"></i></button></td>
-        </tr>`;
-        $("#mainTable").append(html_row);
+        async: false,
+        success: function(result) {
+            let html_row = `<tr>
+                <td>${newLocName}</td>
+                <td><button class="editLocationBtn locationEdit btn btn-warning" locationName="${newLocName}" locationID="${result.id}" departments="0">
+                <i class="fas fa-pencil-alt"></i></button></td>
+                <td><button class="deleteLocBtn locationDelete btn btn-danger" locationName="${newLocName}" locationID="${result.id}" departments="0">
+                <i class="fa fa-trash"></i></button></td>
+            </tr>`;
+            $("#mainTable").append(html_row);
 
             // Hide the modal and remove the backdrop
             $('#addLocationModal').modal('hide');
@@ -778,18 +870,18 @@ function generateSearchResultsUsers(results){
     var search_html_table = "";
 
   // Update Main HTML Table
-for (i = 0; i < list.length; i++) {
+  for (i = 0; i < list.length; i++) {
     search_html_table += `<tr class="tableRow" id="${list[i].id}">
-        <td scope="row" class="col-12 col-sm-6 col-md-2 text-center">${list[i].lastName}</td>
-        <td scope="row" class="col-12 col-sm-6 col-md-2 text-center">${list[i].firstName}</td>
-        <td scope="row" class="d-none d-md-table-cell text-center">${list[i].email}</td>
-        <td scope="row" class="d-none d-xl-table-cell text-center">${list[i].jobTitle}</td>
-        <td scope="row" class="d-none d-xl-table-cell text-center">${list[i].department}</td>
-        <td scope="row" class="d-none d-xl-table-cell text-center">${list[i].location}</td>
-        <td class="text-center"><button class="editBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
-        <td class="text-center"><button class="deleteUserBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
+        <td scope="row" class="col-12 col-sm-6 col-md-2">${list[i].lastName}</td>
+        <td scope="row" class="col-12 col-sm-6 col-md-2">${list[i].firstName}</td>
+        <td scope="row" class="d-none d-md-table-cell">${list[i].email}</td>
+        <td scope="row" class="d-none d-xl-table-cell">${list[i].jobTitle}</td>
+        <td scope="row" class="d-none d-xl-table-cell">${list[i].department}</td>
+        <td scope="row" class="d-none d-xl-table-cell">${list[i].location}</td>
+        <td><button class="editBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
+        <td><button class="deleteUserBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
         </tr>`;
-}
+  }
 
 if (search_html_table === "") {
     toastr.info('No Search Results Found');
@@ -865,35 +957,33 @@ function generateDepartmentList() {
 
 function getAllUsers() {
     fetchTableData("../companydirectory/libs/php/getAll.php", 'json', function(results) {
-        let data = results["data"];
-        let usersArray = data.map(item => item);
-        let html_table = usersArray.map(user => `<tr class="tableRow" id="${user.id}">
-                <td scope="row" class="text-center col-12 col-sm-6 col-md-4 col-lg-2">${user.lastName}</td>
-                <td scope="row" class="text-center col-12 col-sm-6 col-md-4 col-lg-2">${user.firstName}</td>
-                <td scope="row" class="text-center d-none d-md-table-cell col-md-4 col-lg-2">${user.email}</td>
-                <td scope="row" class="text-center d-none d-lg-table-cell col-lg-2">${user.jobTitle}</td>
-                <td scope="row" class="text-center d-none d-lg-table-cell col-lg-2">${user.department}</td>
-                <td scope="row" class="text-center d-none d-lg-table-cell col-lg-2">${user.location}</td>
-                <td class="text-center"><button class="editUserBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button>
-                </td>
-                <td class="text-center"><button class="deleteUserBtn btn btn-danger"><i class="fa fa-trash"></i></button>
-                </td>
-            </tr>`).join('');
-        $('#mainTable').html(html_table);
-        $('#mainTable').removeClass('initiallyHidden').fadeIn('slow');
+      let data = results["data"];
+      let usersArray = data.map(item => item);
+      let html_table = usersArray.map(user => `<tr class="tableRow" id="${user.id}">
+        <td scope="row" class="col-12 col-sm-6 col-md-4 col-lg-2">${user.lastName}</td>
+        <td scope="row" class="col-12 col-sm-6 col-md-4 col-lg-2">${user.firstName}</td>
+        <td scope="row" class="d-none d-md-table-cell col-md-4 col-lg-2">${user.email}</td>
+        <td scope="row" class="d-none d-lg-table-cell col-lg-2">${user.jobTitle}</td>
+        <td scope="row" class="d-none d-lg-table-cell col-lg-2">${user.department}</td>
+        <td scope="row" class="d-none d-lg-table-cell col-lg-2">${user.location}</td>
+        <td><button class="editUserBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
+        <td><button class="deleteUserBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
+      </tr>`).join('');
+      $('#mainTable').html(html_table);
+      $('#mainTable').removeClass('initiallyHidden').fadeIn('slow');
     });
-}
-
-function updateTableHeaders(tab) {
+  }
+  
+  function updateTableHeaders(tab) {
     const personnelHeaders = [
-        "lastName",
-        "firstName",
-        "email",
-        "jobTitle",
-        "departmentHeader",
-        "locationHeader",
-        "editHeader",
-        "deleteHeader",
+      "lastName",
+      "firstName",
+      "email",
+      "jobTitle",
+      "departmentHeader",
+      "locationHeader",
+      "editHeader",
+      "deleteHeader",
     ];
     const departmentHeaders = ["departmentHeader", "locationHeader", "editHeader", "deleteHeader"];
     const locationHeaders = ["locationHeader", "editHeader", "deleteHeader"];
@@ -907,74 +997,59 @@ function updateTableHeaders(tab) {
       headers = locationHeaders;
     }
   
-   // Reset classes for all headers
-$("#lastName").attr("class", "personnel col-12 col-sm-6 col-md-4 col-lg-2 text-center");
-$("#firstName").attr("class", "personnel col-12 col-sm-6 col-md-4 col-lg-2 text-center");
-$("#email").attr("class", "personnel d-none d-md-table-cell col-md-4 col-lg-2 text-center");
-$("#jobTitle").attr("class", "personnel d-none d-lg-table-cell col-lg-2 text-center");
-$("#departmentHeader").attr("class", "department location d-none d-lg-table-cell col-lg-2 text-center");
-$("#locationHeader").attr("class", "personnel department location d-none d-lg-table-cell col-lg-2 text-center");
-$("#editHeader").attr("class", "personnel text-center");
-$("#deleteHeader").attr("class", "personnel text-center");
-    
-    
-    
+    // Reset classes for all headers
+    $(".static-header th").attr("class", "");
   
     // Hide all headers first
-    $("#sqlTable thead th").css("display", "none");
-
+    $(".static-header th").css("display", "none");
+  
     // Show only the necessary headers
     headers.forEach((headerId) => {
       $("#" + headerId).css("display", "");
     });
-
+  
     // Fade in the visible headers
-    setTimeout(function() {
-        $("#sqlTable thead").removeClass('initiallyHidden').fadeIn('slow');
+    setTimeout(function () {
+      $(".static-header").fadeIn("slow");
     }, 200);
-
-   // Override display property for large screens for the department and location tabs
-if (tab === "department") {
-    $("#email, #jobTitle").addClass("d-lg-none");
-    $("#email, #jobTitle").addClass("d-md-none");
-    $("#departmentHeader, #locationHeader").removeClass("d-lg-none").css("display", "table-cell");
-    $("#departmentHeader, #locationHeader").removeClass("d-none");
-} else if (tab === "location") {
-    $("#email, #jobTitle, #departmentHeader").addClass("d-lg-none");
-    $("#email, #jobTitle, #departmentHeader").addClass("d-md-none");
-    $("#locationHeader").removeClass("d-lg-none").css("display", "table-cell");
-    $("#locationHeader").removeClass("d-none");
-}
-      // Removed the line that toggles the "edit" header visibility
+  
+    // Override display property for large screens for the department and location tabs
+    if (tab === "department") {
+      $("#email, #jobTitle").addClass("d-lg-none");
+      $("#departmentHeader, #locationHeader").removeClass("d-none");
+    } else if (tab === "location") {
+      $("#email, #jobTitle, #departmentHeader").addClass("d-lg-none");
+      $("#locationHeader").removeClass("d-none");
+    }
   }
-      
-      // Add event listeners for tab clicks
-$("#personnel-tab").on("click", function () {
+  
+  // Add event listeners for tab clicks
+  $("#personnel-tab").on("click", function () {
     // Hide the table data and headers
     $('#mainTable').hide();
-    $("#sqlTable thead").hide();
-
+    $(".static-header").hide();
+  
     updateTableHeaders("personnel");
     getAllUsers();
-});
-
-$("#department-tab").on("click", function () {
+  });
+  
+  $("#department-tab").on("click", function () {
     // Hide the table data and headers
     $('#mainTable').hide();
-    $("#sqlTable thead").hide();
-
+    $(".static-header").hide();
+  
     updateTableHeaders("department");
-    getDepartmentData(); 
-});
-
-$("#location-tab").on("click", function () {
+    getDepartmentData();
+  });
+  
+  $("#location-tab").on("click", function () {
     // Hide the table data and headers
     $('#mainTable').hide();
-    $("#sqlTable thead").hide();
-
+    $(".static-header").hide();
+  
     updateTableHeaders("location");
     getLocationData();
-});
+  });
       
       
       
@@ -992,10 +1067,10 @@ $("#location-tab").on("click", function () {
     
                 data.forEach((department) => {
                     html_table += `<tr class="depTableRow" title="${department.department}" departmentID="${department.id}" location="${department.locationID}" users="${department.users}">
-                    <td class="text-center">${department.department}</td>
-                    <td class="text-center">${department.location}</td>
-                    <td class="text-center"><button class="editDepartmentBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
-                    <td class="text-center"><button class="deletDepBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
+                    <td>${department.department}</td>
+                    <td>${department.location}</td>
+                    <td><button class="editDepartmentBtn btn btn-warning"><i class="fas fa-pencil-alt"></i></button></td>
+                    <td><button class="deletDepBtn btn btn-danger"><i class="fa fa-trash"></i></button></td>
                     </tr>`;
                 });
     
@@ -1215,9 +1290,9 @@ function getLocationData() {
 
             data.forEach((location) => {
                 html_table += `<tr>
-                    <td class="text-center">${location.location}</td>
-                    <td class="text-center"><button class="editLocationBtn locationEdit btn btn-warning" locationName="${location.location}" locationID="${location.id}" departments="${location.departments}"><i class="fas fa-pencil-alt"></i></button></td>
-                    <td class="text-center"><button class="deleteLocBtn locationDelete btn btn-danger" locationName="${location.location}" locationID="${location.id}" departments="${location.departments}"><i class="fa fa-trash"></i></button></td>
+                    <td>${location.location}</td>
+                    <td><button class="editLocationBtn locationEdit btn btn-warning" locationName="${location.location}" locationID="${location.id}" departments="${location.departments}"><i class="fas fa-pencil-alt"></i></button></td>
+                    <td><button class="deleteLocBtn locationDelete btn btn-danger" locationName="${location.location}" locationID="${location.id}" departments="${location.departments}"><i class="fa fa-trash"></i></button></td>
                 </tr>`;
             });
 

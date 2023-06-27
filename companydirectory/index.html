@@ -31,95 +31,89 @@
     <body>
         <main>
             <div id="preloader"></div>
-            
-
-                 <!-- Search Bar -->
-<div class="row justify-content-center mt-3">
-    <div class="col-md-6 searchBar">
-        <div class="input-group">
-            <select id="searchSelect" name="searchSelect" class="custom-select">
-                <option value="lastName"selected>Last Name</option>
-                <option value="firstName">First Name</option>
-                <option value="email">Email</option>
-                <option value="jobTitle">Job Title</option>
-                <option value="department">Department</option>
-                <option value="location">Location</option>
-            </select>
-            <input id="searchField" name="text" type="text" placeholder="Search.." class="form-control" required>
-            <div class="input-group-append">
-                <div class="input-group-text" id="search">
-                    <i class="fa fa-search"></i>
+            <div class="fixed-top bg-light"></div>
+            <!-- Search Bar -->
+    <div class="fixed-top bg-light p-3">
+        <div class="row justify-content-center">
+            <div class="col-md-6 searchBar">
+                <div class="input-group">
+                    <select id="searchSelect" name="searchSelect" class="custom-select">
+                        <option value="lastName" selected>Last Name</option>
+                        <option value="firstName">First Name</option>
+                        <option value="email">Email</option>
+                        <option value="jobTitle">Job Title</option>
+                        <option value="department">Department</option>
+                        <option value="location">Location</option>
+                    </select>
+                    <input id="searchField" name="text" type="text" placeholder="Search.." class="form-control" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text" id="search">
+                            <i class="fa fa-search"></i>
+                        </div>
+                        <button id="resetBtn" type="button" class="btn btn-secondary" style="visibility: hidden;"><i class="fas fa-undo"></i></button>
+                    </div>
                 </div>
-                <button id="resetBtn" type="button" class="btn btn-secondary" style="visibility: hidden;"><i class="fas fa-undo"></i></button>
             </div>
         </div>
+
+        <!-- Add Staff, Departments, and Locations Buttons -->
+        <div class="d-flex justify-content-center mb-3">
+            <button type="button" id="addButton" class="btn btn-secondary">Add <i class="fas fa-plus"></i></button>
+        </div>
+
+        <!--  Staff, Departments, and Locations Tab Content -->
+        <ul class="nav nav-tabs nav-fill flex-sm-row" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link tab-custom active" id="personnel-tab" data-bs-toggle="tab" data-bs-target="#personnel" type="button" role="tab"
+                        aria-controls="personnel" aria-selected="true">Personnel</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link tab-custom" id="department-tab" data-bs-toggle="tab" data-bs-target="#department" type="button" role="tab"
+                        aria-controls="department" aria-selected="false">Department</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link tab-custom" id="location-tab" data-bs-toggle="tab" data-bs-target="#location" type="button" role="tab"
+                        aria-controls="location" aria-selected="false">Location</button>
+            </li>
+        </ul>
     </div>
-</div>
-
-               <!-- Add Staff, Departments, and Locations Buttons -->
-<div class="d-flex justify-content-center mb-3">
-    <button type="button" id="addButton" class="btn btn-secondary">Add <i class="fas fa-plus"></i>
-    </button>
-</div>
-
-
-
-<!--  Staff, Departments, and Locations Tab Content -->
-<ul class="nav nav-tabs nav-fill flex-sm-row" id="myTab" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link tab-custom active" id="personnel-tab" data-bs-toggle="tab" data-bs-target="#personnel" type="button" role="tab" aria-controls="personnel" aria-selected="true">Personnel</button>
-    </li> 
-    <li class="nav-item" role="presentation">
-      <button class="nav-link tab-custom" id="department-tab" data-bs-toggle="tab" data-bs-target="#department" type="button" role="tab" aria-controls="department" aria-selected="false">Department</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link tab-custom" id="location-tab" data-bs-toggle="tab" data-bs-target="#location" type="button" role="tab" aria-controls="location" aria-selected="false">Location</button>
-    </li>
-</ul>
-
-<div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="personnel" role="tabpanel" aria-labelledby="personnel-tab">
-    <!-- Personnel tab content goes here -->
-  </div>
-  <div class="tab-pane fade" id="department" role="tabpanel" aria-labelledby="department-tab">
-    <!-- Department tab content goes here -->
-  </div>
-  <div class="tab-pane fade" id="location" role="tabpanel" aria-labelledby="location-tab">
-    <!-- Location tab content goes here -->
-  </div>
-</div>
 
 
                 
                 <!-- Main Table -->
-                <div class="row full-viewport">
+                <div class="container mt-5" style="padding-top: 115px;">
                     <div class="row">
-                        <div class="col">
-                            <div class="tableHolder">
-                                <div class="tableFixHead">
-                                    <table class="table-striped" id="sqlTable">
-                                        <thead class="tableHead sticky-header">
-                                            <tr>
-                                                <th scope="col" class="personnel col-12 col-sm-6 col-md-4 col-lg-2 text-center" id="lastName">Last Name</th>
-                                                <th scope="col" class="personnel col-12 col-sm-6 col-md-4 col-lg-2 text-center" id="firstName">First Name</th>
-                                                <th scope="col" class="personnel d-none d-md-table-cell col-md-4 col-lg-2 text-center" id="email">Email</th>
-                                                <th scope="col" class="personnel d-none d-lg-table-cell col-lg-2 text-center" id="jobTitle">Job Title</th>
-                                                <th scope="col" class="department location d-none d-lg-table-cell col-lg-2 text-center" id="departmentHeader">Department</th>
-                                                <th scope="col" class="personnel department location d-none d-lg-table-cell col-lg-2 text-center" id="locationHeader">Location</th>
-                                                <th scope="col" class="personnel text-center" id="editHeader">Edit</th>
-                                                <th scope="col" class="personnel text-center" id="deleteHeader">Del</th>
-                                            </tr>
-                                        </thead>
-                                        
-                                        <tbody id="mainTable">
-                                            <!-- The table rows will be generated with the same responsive classes applied to the data cells. -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                      <div class="col">
+                        <div class="table-container">
+                            <div class="table-scrollable">
+                          <table class="table-striped" id="sqlTable">
+                            <thead>
+                                <thead class="tableHead static-header">
+                                    <tr>
+                                      <th scope="col" class="personnel col-12 col-sm-6 col-md-4 col-lg-2" id="lastName">Last Name</th>
+                                      <th scope="col" class="personnel col-12 col-sm-6 col-md-4 col-lg-2" id="firstName">First Name</th>
+                                      <th scope="col" class="personnel d-none d-md-table-cell col-md-4 col-lg-2" id="email">Email</th>
+                                      <th scope="col" class="personnel d-none d-lg-table-cell col-lg-2" id="jobTitle">Job Title</th>
+                                      <th scope="col" class="department location d-none d-lg-table-cell col-lg-2" id="departmentHeader">Department</th>
+                                      <th scope="col" class="personnel department location d-none d-lg-table-cell col-lg-2" id="locationHeader">Location</th>
+                                      <th scope="col" class="personnel" id="editHeader">Edit</th>
+                                      <th scope="col" class="personnel" id="deleteHeader">Del</th>
+                                    </tr>
+                                  </thead>
+                                  
+                            <tbody id="mainTable">
+                              <!-- The table rows will be generated with the same responsive classes applied to the data cells. -->
+                            </tbody>
+                          </table>
                         </div>
+                      </div>
                     </div>
+                  </div>
                 </div>
+                  
+  
+                  
+                  
                 
 
 
