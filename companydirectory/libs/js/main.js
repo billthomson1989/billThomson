@@ -971,8 +971,7 @@ function getAllUsers() {
       </tr>`).join('');
       $('#mainTable').html(html_table);
       $('#mainTable').removeClass('initiallyHidden').fadeIn('slow');
-    });
-  }
+  
   
   function updateTableHeaders(tab) {
     const personnelHeaders = [
@@ -998,60 +997,74 @@ function getAllUsers() {
     }
   
     // Reset classes for all headers
-    $(".static-header th").attr("class", "");
+$("#lastName").attr("class", "personnel col-12 col-sm-6 col-md-4 col-lg-2");
+$("#firstName").attr("class", "personnel col-12 col-sm-6 col-md-4 col-lg-2");
+$("#email").attr("class", "personnel d-none d-md-table-cell col-md-4 col-lg-2");
+$("#jobTitle").attr("class", "personnel d-none d-lg-table-cell col-lg-2");
+$("#departmentHeader").attr("class", "department location d-none d-lg-table-cell col-lg-2");
+$("#locationHeader").attr("class", "personnel department location d-none d-lg-table-cell col-lg-2");
+$("#editHeader").attr("class", "personnel");
+$("#deleteHeader").attr("class", "personnel");
+    
+    
+    
   
     // Hide all headers first
-    $(".static-header th").css("display", "none");
-  
+    $("#sqlTable thead th").css("display", "none");
+
     // Show only the necessary headers
     headers.forEach((headerId) => {
       $("#" + headerId).css("display", "");
     });
-  
+
     // Fade in the visible headers
-    setTimeout(function () {
-      $(".static-header").fadeIn("slow");
+    setTimeout(function() {
+        $("#sqlTable thead").removeClass('initiallyHidden').fadeIn('slow');
     }, 200);
-  
-    // Override display property for large screens for the department and location tabs
-    if (tab === "department") {
-      $("#email, #jobTitle").addClass("d-lg-none");
-      $("#departmentHeader, #locationHeader").removeClass("d-none");
-    } else if (tab === "location") {
-      $("#email, #jobTitle, #departmentHeader").addClass("d-lg-none");
-      $("#locationHeader").removeClass("d-none");
-    }
+
+   // Override display property for large screens for the department and location tabs
+if (tab === "department") {
+    $("#email, #jobTitle").addClass("d-lg-none");
+    $("#email, #jobTitle").addClass("d-md-none");
+    $("#departmentHeader, #locationHeader").removeClass("d-lg-none").css("display", "table-cell");
+    $("#departmentHeader, #locationHeader").removeClass("d-none");
+} else if (tab === "location") {
+    $("#email, #jobTitle, #departmentHeader").addClass("d-lg-none");
+    $("#email, #jobTitle, #departmentHeader").addClass("d-md-none");
+    $("#locationHeader").removeClass("d-lg-none").css("display", "table-cell");
+    $("#locationHeader").removeClass("d-none");
+}
+      // Removed the line that toggles the "edit" header visibility
   }
-  
-  // Add event listeners for tab clicks
-  $("#personnel-tab").on("click", function () {
+      
+      // Add event listeners for tab clicks
+$("#personnel-tab").on("click", function () {
     // Hide the table data and headers
     $('#mainTable').hide();
-    $(".static-header").hide();
-  
+    $("#sqlTable thead").hide();
+
     updateTableHeaders("personnel");
     getAllUsers();
-  });
-  
-  $("#department-tab").on("click", function () {
+});
+
+$("#department-tab").on("click", function () {
     // Hide the table data and headers
     $('#mainTable').hide();
-    $(".static-header").hide();
-  
+    $("#sqlTable thead").hide();
+
     updateTableHeaders("department");
-    getDepartmentData();
-  });
-  
-  $("#location-tab").on("click", function () {
+    getDepartmentData(); 
+});
+
+$("#location-tab").on("click", function () {
     // Hide the table data and headers
     $('#mainTable').hide();
-    $(".static-header").hide();
-  
+    $("#sqlTable thead").hide();
+
     updateTableHeaders("location");
     getLocationData();
-  });
-      
-      
+});
+
       
     // Function to get and display department data
     function getDepartmentData() {
@@ -1563,3 +1576,4 @@ $("#newUserForm").submit(function(e) {
     // Use find() method to find the department object corresponding to the selected department ID
     let newUserLocation = currentDepartments.find(dept => dept.id === newUserDepartmentID).location;
 });
+}});
